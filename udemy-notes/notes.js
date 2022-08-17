@@ -25,25 +25,29 @@ var add = (a, b) => a + b;
 var instructor = {
   firstname: "nate",
   sayHI: function () {
-    setTimeout(function () {
-      console.log("hello " + this.firstname);
-    }.bind(this), 1000);
-  }
+    setTimeout(
+      function () {
+        console.log("hello " + this.firstname);
+      }.bind(this),
+      1000
+    );
+  },
 };
 
 //refactorred with arrow function, parent function needed for this reference
 var instructor = {
-    firstname: "nate",
-    sayHI: function () {
-      setTimeout( () => {
-        console.log("hello " + this.firstname);
-      }, 1000);
-    }
-  };
-  //#endregion
+  firstname: "nate",
+  sayHI: function () {
+    setTimeout(() => {
+      console.log("hello " + this.firstname);
+    }, 1000);
+  },
+};
+//#endregion
 
 //#region Advanced Array Methods
-
+  //#region FOREACH---
+  
 /*
 forEach ---
 [1,2,3].forEach(function(value, index, array){
@@ -58,7 +62,7 @@ forEach ---
 
 write a function called foreach accepts array and a callback function
 */
-function ForEach(arr, callback){
+function ForEach(arr, callback) {
   for (let index = 0; index < arr.length; index++) {
     callback(arr[i], i, arr);
   }
@@ -66,11 +70,11 @@ function ForEach(arr, callback){
 }
 
 //write function to divide all values by 2 using foreach
-function halfValues(arr){
+function halfValues(arr) {
   var newArr = [];
-  
-  arr.forEach(function(val){
-    newArr.push(val/2);
+
+  arr.forEach(function (val) {
+    newArr.push(val / 2);
   });
   return newArr;
   // halfValues([2,4,6]); // [1,2,3]
@@ -89,9 +93,9 @@ Examples:
 //foreach with callback function on passed array values
 //push to insert passed array values multiplied by 2 to new array
 //return new array
-function doubleValues(arr){
+function doubleValues(arr) {
   var newArr = [];
-  arr.forEach(function (val){
+  arr.forEach(function (val) {
     newArr.push(val * 2);
   });
   return newArr;
@@ -105,14 +109,14 @@ Examples:
     onlyEvenValues([5,1,2,3,10]) // [2,10]
 
 */
-function onlyEvenValues(arr){
-    var newArr = [];
-    arr.forEach(function (val){
-      if (val % 2 === 0) {
-        newArr.push(val);
-      }
-    });
-    return newArr;
+function onlyEvenValues(arr) {
+  var newArr = [];
+  arr.forEach(function (val) {
+    if (val % 2 === 0) {
+      newArr.push(val);
+    }
+  });
+  return newArr;
 }
 
 /*
@@ -123,15 +127,14 @@ Examples:
     showFirstAndLast(['hi', 'goodbye', 'smile']) // ['hi', 'ge', 'se']
 
 */
-function showFirstAndLast(arr){
+function showFirstAndLast(arr) {
   var newArr = [];
-  
-    arr.forEach(val => {
-      let first = val[0];
-      let last = val[val.length -1];
-      newArr.push(first + last, []);
-    });
-    return newArr;
+  arr.forEach((val) => {
+    let first = val[0];
+    let last = val[val.length - 1];
+    newArr.push(first + last);
+  });
+  return newArr;
 }
 
 /*
@@ -160,9 +163,16 @@ Examples:
     
     Object.assign(obj, {key3: "value3"});
 */
-function addKeyAndValue(arr,key,value){
-  arr.forEach(() =>{
-    Object.assign(value, {key: value});
+function addKeyAndValue(arr, key, value) {
+  arr.forEach((val) => {
+    Object.assign(val, { [key]: value });
+  });
+  return arr;
+}
+
+function addKeyAndValue(arr, key, value) {
+  arr.forEach((val) => {
+    val[key] = value;
   });
   return arr;
 }
@@ -170,7 +180,8 @@ function addKeyAndValue(arr,key,value){
 /*
 Write a function called vowelCount which accepts a string and returns an 
 object with the keys as the vowel and the values as the number of times 
-the vowel appears in the string. This function should be case insensitive so a lowercase letter and uppercase letter should count
+the vowel appears in the string. This function should be case insensitive 
+so a lowercase letter and uppercase letter should count
 
 Examples:
     vowelCount('Elie') // {e:2,i:1};
@@ -179,16 +190,115 @@ Examples:
     vowelCount('hmmm') // {};
     vowelCount('I Am awesome and so are you') // {i: 1, a: 4, e: 3, o: 3, u: 1};
 */
-function vowelCount(str){
-   
+function vowelCount(str) {
+  let vowels = ["a", "e", "i", "o", "u"];
+  let newArr = [];
+  let myObj = {};
+  let counter = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    newArr.push(str[i]);
+  }
+
+  vowels.forEach((val) => {
+    if (newArr.includes(val)) {
+      console.log(val);
+      counter++;
+      Object.assign(myObj, { [val]: [counter] });
+      console.log(myObj);
+    }
+  });
+}
+function vowelCount2(str) {
+  let splitArr = str.split("");
+  let vowels = "aeiou";
+  let myObj = {};
+
+  splitArr.forEach(function(val){
+    if (vowels.indexOf(val.toLowerCase()) !== -1) {
+      if (val in myObj) {
+        myObj[val]++;
+      }else{
+        myObj[val] = 1;
+      }
+    }
+  });
+  return myObj;
+}
+  //#endregion
+  //#region MAP---
+/*
+Write a function called doubleValues which accepts 
+an array and returns a new array with all the values 
+in the array passed to the function doubled
+
+Examples:
+    doubleValues([1,2,3]) // [2,4,6]
+    doubleValues([1,-2,-3]) // [2,-4,-6]
+*/
+
+function doubleValues(arr){
+    
 }
 
+/*
+Write a function called valTimesIndex which accepts an 
+array and returns a new array with each value multiplied 
+by the index it is currently at in the array.
+
+Examples:
+    valTimesIndex([1,2,3]) // [0,2,6]
+    valTimesIndex([1,-2,-3]) // [0,-2,-6]
+*/
+
+function valTimesIndex(arr){
+    
+}
+
+/*
+Write a function called extractKey which accepts an 
+array of objects and some key and returns a new array 
+with the value of that key in each object.
+
+Examples:
+    extractKey([{name: 'Elie'}, {name: 'Tim'}, {name: 'Matt'}, {name: 'Colt'}], 'name') // ['Elie', 'Tim', 'Matt', 'Colt']
+*/
+
+function extractKey(arr, key){
+    
+}
+
+/*
+Write a function called extractFullName which accepts 
+an array of objects and returns a new array with the value 
+of the key with a name of "first" and the value of a key 
+with the name of  "last" in each object, concatenated together with a space. 
+
+Examples:
+    extractFullName([{first: 'Elie', last:"Schoppik"}, {first: 'Tim', last:"Garcia"}, {first: 'Matt', last:"Lane"}, {first: 'Colt', last:"Steele"}]) // ['Elie Schoppik', 'Tim Garcia', 'Matt Lane', 'Colt Steele']
+*/
+
+function extractFullName(arr){
+    
+}
+  
 
 
+
+
+
+  //#endregion  
 //#endregion
 
+
+
+
+
+
+
+
 //#region Arrow Functions Refactor from Non Arrow
-  //assignment 
+//assignment
 /* 1 - Refactor the following code to use ES2015 arrow functions - make sure your function is also called tripleAndFilter
 
     function tripleAndFilter(arr){
@@ -201,8 +311,10 @@ function vowelCount(str){
 
 */
 
-let tripleAndFilter = (arr) => arr.map((value) => value * 3).filter((value) => value %5 === 0);
-var tripleAndFilter1 = arr => arr.map(val => val * 3).filter(val => val % 5 === 0);
+let tripleAndFilter = (arr) =>
+  arr.map((value) => value * 3).filter((value) => value % 5 === 0);
+var tripleAndFilter1 = (arr) =>
+  arr.map((val) => val * 3).filter((val) => val % 5 === 0);
 
 /* 2 - Refactor the following code to use ES2015 arrow functions. Make sure your function is also called doubleOddNumbers
 
@@ -216,9 +328,10 @@ var tripleAndFilter1 = arr => arr.map(val => val * 3).filter(val => val % 5 === 
 
 */
 
-var doubleOddNumbers = (arr) => arr.filter(val => val % 2 !== 0).map(val => val * 2);
-var doubleOddNumbers = arr => arr.filter(val => val % 2 !== 0).map(val => val * 2);
-
+var doubleOddNumbers = (arr) =>
+  arr.filter((val) => val % 2 !== 0).map((val) => val * 2);
+var doubleOddNumbers = (arr) =>
+  arr.filter((val) => val % 2 !== 0).map((val) => val * 2);
 
 /* 3 - Refactor the following code to use ES2015 arrow functions. Make sure your function is also called mapFilterAndReduce.
 
@@ -234,23 +347,23 @@ var doubleOddNumbers = arr => arr.filter(val => val % 2 !== 0).map(val => val * 
     }
 */
 
-var mapFilterAndReduce = (arr) =>{
-    arr.map(val => val.firstname)
-        .filter(val => val.length > 5)
-        .reduce((acc, next) =>{
-            acc[next] = next.length;
-            return acc;
-        }, {})
-}
+var mapFilterAndReduce = (arr) => {
+  arr
+    .map((val) => val.firstname)
+    .filter((val) => val.length > 5)
+    .reduce((acc, next) => {
+      acc[next] = next.length;
+      return acc;
+    }, {});
+};
 var mapFilterAndReduce1 = (arr) =>
-  arr.map((value) => value.firstName)
+  arr
+    .map((value) => value.firstName)
     .filter((value) => value.length < 5)
     .reduce((acc, next) => {
       acc[next] = next.length;
       return acc;
     }, {});
-
-
 
 /* 4 - Write a function called createStudentObj which accepts two parameters, 
 firstName and lastName and returns an object with the keys of firstName and lastName
@@ -260,13 +373,13 @@ Example:
     createStudentObj('Elie', 'Schoppik') // {firstName: 'Elie', lastName: 'Schoppik'}
 */
 
-var createStudentObj = (first, last) =>{
-    var student = {
-        firstname: first,
-        lastName: last
-    };
-    return student;
-}
+var createStudentObj = (first, last) => {
+  var student = {
+    firstname: first,
+    lastName: last,
+  };
+  return student;
+};
 
 /* 5 - Given the following code: 
 
@@ -285,13 +398,13 @@ Refactor this code to use arrow functions to make sure that in 1000 milliseconds
 */
 
 var instructor = {
-    firstName: "Colt",
-    sayHi: function(){
-        setTimeout(() => {
-            console.log("hello " + this.firstName)
-        }, 1000);
-    }
-}
+  firstName: "Colt",
+  sayHi: function () {
+    setTimeout(() => {
+      console.log("hello " + this.firstName);
+    }, 1000);
+  },
+};
 //#endregion
 
 //#region REST AND SPREAD
@@ -305,7 +418,7 @@ Examples:
     smallestValue(99,12321,12.2) // 2
 */
 
-function smallestValue(...val){
+function smallestValue(...val) {
   return Math.min(...val);
 }
 
@@ -320,8 +433,8 @@ Examples:
   placeInMiddle([],[2,3,4,5]) // [2,3,4,5]
 */
 
-function placeInMiddle(arr, values){
-  let middle = Math.floor( arr.length / 2);
+function placeInMiddle(arr, values) {
+  let middle = Math.floor(arr.length / 2);
   arr.splice(middle, 0, ...values);
   return arr;
 }
@@ -338,13 +451,12 @@ Examples:
   joinArrays([1],[3],[0],[7]) // [1,3,0,7]
 
 */
-function joinArrays(...vals){
+function joinArrays(...vals) {
   return vals.concat(...vals);
 }
-function joinArrays(...vals){
+function joinArrays(...vals) {
   return vals.reduce((acc, next) => acc.concat(next), []);
 }
-
 
 /* 
 // Write a function called sumEvenArgs which takes all of the parameters passed to a function and returns the sum of the even ones.
@@ -355,16 +467,14 @@ Examples:
   sumEvenArgs(1,2) // 2
 */
 
-function sumEvenArgs(...vals){
+function sumEvenArgs(...vals) {
   if (vals % 2 === 0) {
     return vals + vals;
   }
-  (vals %2 === 0) ? vals + vals : vals
-  
-  return vals.reduce((acc, next) => next % 2 === 0 ? acc += next : acc, 0);
+  vals % 2 === 0 ? vals + vals : vals;
+
+  return vals.reduce((acc, next) => (next % 2 === 0 ? (acc += next) : acc), 0);
 }
-
-
 
 /* 
 Write a function called flip which accepts a function and a value for the keyword this. 
@@ -401,13 +511,12 @@ Examples:
 
 */
 
-function flip(fn, thisArg, ...outerArgs){
-  return function(...innerArgs){
+function flip(fn, thisArg, ...outerArgs) {
+  return function (...innerArgs) {
     let allArgs = outerArgs.concat(innerArgs).slice(0, fn.length);
     return fn.apply(thisArg, allArgs.reverse());
-  }
+  };
 }
-
 
 /* 
 Write a function called bind which accepts a function 
@@ -445,12 +554,11 @@ Examples:
   bind(addFourNumbers,this)(1,2,3,4) // 10
   bind(addFourNumbers,this)(1,2,3,4,5,6,7,8,9,10) // 10
   */
-  
 
-function bind(fn, thisArg, ...outerArgs){
-  return function(...innerArgs){
+function bind(fn, thisArg, ...outerArgs) {
+  return function (...innerArgs) {
     return fn.apply(thisArg, [...outerArgs, ...innerArgs]);
-  }
+  };
 }
 
 //#endregion
