@@ -46,8 +46,8 @@ var instructor = {
 //#endregion
 
 //#region Advanced Array Methods
-  //#region FOREACH---
-  
+//#region FOREACH---
+
 /*
 forEach ---
 [1,2,3].forEach(function(value, index, array){
@@ -214,19 +214,49 @@ function vowelCount2(str) {
   let vowels = "aeiou";
   let myObj = {};
 
-  splitArr.forEach(function(val){
+  splitArr.forEach(function (val) {
     if (vowels.indexOf(val.toLowerCase()) !== -1) {
       if (val in myObj) {
         myObj[val]++;
-      }else{
+      } else {
         myObj[val] = 1;
       }
     }
   });
   return myObj;
 }
-  //#endregion
-  //#region MAP---
+//#endregion
+//#region MAP---
+/*
+map ---
+[1,2,3].map(function(value, index, array){
+  return value * 2;
+});
+
+console.log(value, index, array);
+[2,4,6]
+
+function Map(arr, callback){
+  var newArr = [];
+  for(var i = 0; i < arr.length; i++){
+    newArr.push(callback(arr[i], i, array))
+  }
+  return newArr;
+}
+
+function TripleValues(arr){
+  return arr.map(function(value){
+    return value * 3;
+  })
+}
+function OnlyFirstName(arr){
+  return arr.map(function(value){
+    return value.first;
+  })
+}
+
+*/
+
 /*
 Write a function called doubleValues which accepts 
 an array and returns a new array with all the values 
@@ -237,8 +267,10 @@ Examples:
     doubleValues([1,-2,-3]) // [2,-4,-6]
 */
 
-function doubleValues(arr){
-    
+function doubleValues(arr) {
+  return arr.map(function (val) {
+    return val * 2;
+  });
 }
 
 /*
@@ -250,9 +282,23 @@ Examples:
     valTimesIndex([1,2,3]) // [0,2,6]
     valTimesIndex([1,-2,-3]) // [0,-2,-6]
 */
-
-function valTimesIndex(arr){
-    
+function Map(arr, callback) {
+  var newArr = [];
+  for (var i = 0; i < arr.length; i++) {
+    newArr.push(callback(arr[i], i, array));
+  }
+  return newArr;
+}
+// [1,2,3].map(function(value, index, array){
+//   return value * 2;
+// });
+//without map??
+function valTimesIndex(arr) {
+  var newArr = [];
+  for (let i = 0; i < arr.length; i++) {
+    newArr.push(i * arr[i]);
+  }
+  return newArr;
 }
 
 /*
@@ -264,8 +310,21 @@ Examples:
     extractKey([{name: 'Elie'}, {name: 'Tim'}, {name: 'Matt'}, {name: 'Colt'}], 'name') // ['Elie', 'Tim', 'Matt', 'Colt']
 */
 
-function extractKey(arr, key){
-    
+function extractKey(arr, key) {
+  var newArr = [];
+  // arr.forEach((val) => {
+  //   newArr.push(val[key]);
+  // });
+// [1,2,3].map(function(value, index, array){
+  // return arr.map(function (val) {
+  //   return newArr.push(val);
+  // });
+
+  return arr.map(() =>{
+    return newArr.push([key]);
+  });
+
+
 }
 
 /*
@@ -278,24 +337,10 @@ Examples:
     extractFullName([{first: 'Elie', last:"Schoppik"}, {first: 'Tim', last:"Garcia"}, {first: 'Matt', last:"Lane"}, {first: 'Colt', last:"Steele"}]) // ['Elie Schoppik', 'Tim Garcia', 'Matt Lane', 'Colt Steele']
 */
 
-function extractFullName(arr){
-    
-}
-  
+function extractFullName(arr) {}
 
-
-
-
-
-  //#endregion  
 //#endregion
-
-
-
-
-
-
-
+//#endregion
 
 //#region Arrow Functions Refactor from Non Arrow
 //assignment
