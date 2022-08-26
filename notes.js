@@ -691,15 +691,17 @@ Examples:
 
 function vowelCount(str) {
   let vowels = "aeiou";
-  let count = {};
   return str
     .toLowerCase()
     .split("")
     .reduce(function (acc, next) {
-      if (vowels.indexOf(next) === 1) {
-        acc.push(vowels[next])
+      if (vowels.indexOf(next) !== -1) {
+        if (next in acc) {
+          acc[next]++;
+        } else {
+          acc[next] = 1;
+        }
       }
-      console.log(vowels.indexOf(next));
       return acc;
     }, {});
 }
@@ -719,16 +721,22 @@ Examples:
        ]
 */
 
+//USING INDEX TO ACCESS EACH VALUE TO ADD KEY
 function addKeyAndValue(arr, key, value) {
-  return arr.reduce(function(acc, next){
-    
-    console.log(next);
+  return arr.reduce(function (acc, next, i) {
+    acc[i][key] = value;
     return acc;
-  });
+  }, arr);
 }
 
 /*
-Write a function called partition which accepts an array and a callback and returns an array with two arrays inside of it. The partition function should run the callback function on each value in the array and if the result of the callback function at that specific value is true, the value should be placed in the first subarray. If the result of the callback function at that specific value is false, the value should be placed in the second subarray. 
+Write a function called partition which accepts an array and a callback and 
+returns an array with two arrays inside of it. The partition function should 
+run the callback function on each value in the array and if the result of the 
+callback function at that specific value is true, the value should be placed in 
+the first subarray. If the result of the callback function at that specific value 
+is false, the value should be placed in the second subarray. 
+
 Examples:
     
     function isEven(val){
@@ -748,7 +756,221 @@ Examples:
     partition(names, isLongerThanThreeCharacters) // [['Elie', 'Colt', 'Matt'], ['Tim']]
 */
 
-function partition(arr, callback) {}
+function partition(arr, callback) {
+  return arr.reduce(
+    function (acc, next, i) {
+      if (callback(next)) {
+        acc[0].push(next);
+      } else {
+        acc[1].push(next);
+      }
+      return acc;
+    },
+    [[], []]
+  );
+}
+
+//#endregion
+
+//#region CLOSURES AND KEYWORD THIS
+//closures ---
+/*
+  a closure is a function that makes use of variables defined in 
+  outer functions that have previously returned
+
+  -have to return inner function to invoke
+  -can either call with seciond () or can store result of function in variable
+  -do not have to name inner function
+  -only variables used inside inner function are remembered
+
+  function outer(){
+    var start = "Closures are"
+    return function inner(){
+      return start + " " + "awesome"
+    }
+  }
+  outer() //function inner(){return start + " " + "awesome"}
+  outer()() // "Closures are awesome"
+  has access to start due to closure
+
+  function outer(a){
+    return function inner(b){
+      the inner function is making use of the variable 'a'
+      which was defined in an outer function called 'outer'
+      and by the time inner is called, that outer function has 
+      returned this function called "inner" is a closure
+      return a + b
+    }
+  }
+  outer(5)(5); //10
+
+  var storeOuter = outer(5)
+  storeOuter(10);
+
+  inner function tech, variables remembered if returned
+  function outerFn(){
+    var data = "something from outer";
+    var fact = "remember me";
+    return function innerFn(){
+      debugger // have access to fact variable due to return 
+      return fact;
+    }
+  }
+
+
+
+  Using closures in the wild
+  - closures create the concept of private variables, 
+    variables which should not be modified externally, not built into js
+
+  function counter(){
+    var count = 0;
+    return function inner(){
+      count++
+      return count;
+    }
+  }
+  all own private variables
+  var counter1 = counter();
+  Console.log(counter1) //function definition
+  counter1(); //1
+  counter1(); //2
+
+  var coutner2 = counter();
+  coutner2(); //1
+
+
+
+  function classRoom(){
+    var instructors = ["Ellie", "Colt"];
+    return { //object with method
+      getInstructors: function(){
+        return instructors;
+      },
+      addInstructor: function(instructor){
+        instructors.push(instructor);
+        return instructors;
+      }
+    }
+  }
+  var first = classRoom();
+  first.getInstructors(); //["Ellie", "Colt"]
+  first.addInstructor("Matt"); //["Ellie", "Colt", "Matt"]
+  first.addInstructor("Tim"); //["Ellie", "Colt", "Matt", "Tim"]
+
+  var second = classRoom();
+  first.getInstructors(); //["Ellie", "Colt"] (not first instructors)
+
+  first.getInstructors().pop() //["Ellie"] (not good, modifying original variable)
+  should return shallow copy of array
+
+  function classRoom(){
+    var instructors = ["Ellie", "Colt"];
+    return { //object with method
+      getInstructors: function(){
+        return instructors.slice();
+      },
+      addInstructor: function(instructor){
+        instructors.push(instructor);
+        return instructors.slice();
+      }
+    }
+  }
+*/
+/* 
+Write a function called specialMultiply which accepts two parameters. 
+If the function is passed both parameters, it should return the product of the two. 
+If the function is only passed one parameter - it should return a function which can 
+later be passed another parameter to return the product. You will have to use closure 
+and arguments to solve this.
+
+Examples: 
+    specialMultiply(3,4); // 12
+    specialMultiply(3)(4); // 12
+    specialMultiply(3); // function(){}....
+*/
+
+function specialMultiply(a, b) {
+  if (arguments.length === 1) {
+    return function(b){
+      return a * b;
+    }
+  }
+  return a * b;
+}
+
+/* 
+Write a function called guessingGame which takes in one parameter amount. 
+The function should return another function that takes in a parameter called guess. 
+In the outer function, you should create a variable called answer which is the result 
+of a random number between 0 and 10 as well as a variable called guesses which should be set to 0.
+
+In the inner function, if the guess passed in is the same as the random number 
+(defined in the outer function) - you should return the string "You got it!". 
+If the guess is too high return "Your guess is too high!" and if it is too low, 
+return "Your guess is too low!". You should stop the user from guessing if the 
+amount of guesses they have made is greater than the initial amount passed to the outer function.
+
+You will have to make use of closure to solve this problem.
+
+Examples (yours might not be like this, since the answer is random every time):
+
+    var game = guessingGame(5)
+    game(1) // "You're too low!"
+    game(8) // "You're too high!"
+    game(5) // "You're too low!"
+    game(7) // "You got it!"
+    game(1) // "You are all done playing!"
+
+    var game2 = guessingGame(3)
+    game2(5) // "You're too low!"
+    game2(3) // "You're too low!"
+    game2(1) // "No more guesses the answer was 0"
+    game2(1) // "You are all done playing!"
+*/
+
+function guessingGame(amount) {
+  var guesses = 0;
+  var answer = Math.floor(Math.random() * 11);
+  return function(val){
+    guesses++;
+    console.log(val, guesses);
+    console.log(answer);
+    if (val === answer) {
+      return "You got it!";
+    }else if(val < answer){
+      return "Your guess is too low!";
+    }
+    else if(val > answer){
+      return "Your guess is too high!";
+    }
+    else if(val > guesses){
+      return "too many guesses";
+    }
+  }
+}
+/*
+//recap
+
+-closure exists when an inner functions makes use of 
+variables declared in an outer function which has previously returned
+
+-closure does not exist if you do not return an inner function and if that inner
+function does not make use of vairables returned by an outer function
+
+-Javascript will only remember values thatare being used inside of the inner function, 
+not all variabes defined in the outer function
+
+-we can use clousres to create private variables and 
+write better code that isolate out loguic and application
+
+*/
+
+
+//keyword 'this'
+
+
+
 
 //#endregion
 
