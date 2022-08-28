@@ -964,10 +964,425 @@ not all variabes defined in the outer function
 -we can use clousres to create private variables and 
 write better code that isolate out loguic and application
 
-*/
+
 
 
 //keyword 'this'
+
+-a reserved keyword in javascript
+-usually determied by how a function is called
+-can be determined using four rules (global, object/implicit, explicit, new)
+
+-Global context / not inside delcared object
+function whatIsThis(){
+  return this //returns window
+}
+function variablesInThis(){
+  this.person = "Ellie";
+}
+variablesInThis(); //keyword this inside function is window
+console.log(person) //Ellie
+
+
+-Implicit/Object binding
+-when keyword 'this' is inside of a declared object an function is run
+//strict mode does not make a difference here
+var person = {
+  firstName: "Ellie",
+  sayHi: function(){
+    return "Hi " + this.firstName;
+  },
+  determineContext: function(){
+    return this === person;
+  }
+}
+person.sayHi(); //"Hi Ellie"
+person.determineContext(); //true
+
+Implicit Binding
+-the value of this will alwasy be closest parent object
+var person = {
+  firstName: "Ellie",
+  sayHi: function(){
+    return "Hi " + this.firstName;
+  },
+  determineContext: function(){
+    return this === person;
+  },
+  dog: {
+        sayHello: function(){
+          return "Hi " + this.firstName;
+        },
+        determineContext: function(){
+          return this === person; //keyword this does not refer to person object(dog object)
+        }
+  }
+}
+person.dog.sayHello(); //"Hello undefined" (dog.firstname)
+person.dog.determineContext(); //false
+
+IF we want this value changed - call, apply, bind functions
+
+Explicit Binding
+-choose what we want the contet of 'this' to be using call, apply, or bind
+-can only by used by functions
+
+Call
+- takes unlimited params, will set 'this', second param is any params used by function
+Apply 
+- only takes 2 params, params are what we want this to be, second param is array of arguments passed whch we change this to
+Bind
+-returns function definition with val of this set by param
+
+
+Method       Params(thisValue)    Invoke Immediately?
+Call         thisArg,a,b,c,d      Yes
+Apply        thisArg,[a,b,c,d]    Yes
+Bind         thisArg,a,b,c,d      No
+
+-Call, Apply, Bind are 3 methods used to explicitly set the value of 'this'
+-We use them when we want full controll over value keyword 'this'
+-Call and apply will return immedialtely
+-Bind returns new function definition with keyword this set
+-Call and bind accept unlimited params, apply only 2
+
+Fixing with Call Method
+person.dog.sayHello(); //"Hello undefined" (dog.firstname)
+person.dog.determineContext(); //false
+
+person.dog.sayHello.call(person); //"Hello Colt" (person.firstname defined)
+person.dog.determineContext.call(person); //true
+-notice how we do not actually invoke sayHello or determineContext
+
+Using Call in the wild
+-to avoid code duplication
+
+//duplicate sayhi function
+var colt = {
+  firstName: "Colt",
+  sayHi: function(){
+    return "Hi " + this.firstName;
+  }
+}
+var ellie = {
+  firstName: "Ellie",
+  sayHi: function(){
+    return "Hi " + this.firstName;
+  }
+}
+colt.sayHi(); //Hi Colt
+ellie.sayHi(); //Hi Ellie (colde ducplicated from Colt object...)
+
+Refactor using call (borrow the sayHi function from colt and set value to ellie)
+
+var colt = {
+  firstName: "Colt",
+  sayHi: function(){
+    return "Hi " + this.firstName;
+  }
+}
+var ellie = {
+  firstName: "Ellie"
+}
+colt.sayHi(); //Hi Colt
+colt.sayHi.call(ellie); //Hi Ellie (call function setting 'this' to ellie object)
+
+
+One step further
+-a sayHi function that anyone can use
+function sayHi(){
+  return "Hi " + this.firstName;
+}
+var colt = {
+  firstName: "Colt"
+}
+var ellie = {
+  firstName: "Ellie"
+}
+sayHi.call(colt); //Hi Colt (passed obj as 'this')
+sayHi.call(ellie); //Hi Ellie
+
+One function for many use cases - awesome
+
+Another use case
+-select all divs on page
+var divs = document.getElementsByTagName('div'); //returns list of divs
+-select all divs on page containing text "Hello"
+-divs is not an array, it is an array like object, divs.filter will not work
+-convert arraylike to array using slice
+
+-use slice method on arrays with call, set the target of 'this' 
+to be our divs array like object
+
+var divsArray = [].sice.call(divs);
+//also may also see as Array.prototype.slice.call(divs)
+
+divsArray.filter(function(val){
+  return val.innerText === 'Hello';
+});
+//slicing something that is not actually an array
+//slice will not work on all datatypes but works well with array-like-objects
+
+
+
+Apply
+function sayHi(){
+  return "Hi " + this.firstName;
+}
+var colt = {
+  firstName: "Colt"
+}
+var ellie = {
+  firstName: "Ellie"
+}
+sayHi.call(colt); //Hi Colt
+sayHi.apply(ellie); //Hi Ellie (seems the same, but what about arguments)
+
+
+function addNumbers(a,b,c,d){
+  return this.firstName + " just calculated " + (a,b,c,d);
+}
+var colt = {
+  firstName: "Colt"
+}
+var ellie = {
+  firstName: "Ellie"
+}
+addNumbers.call(ellie,1,2,3,4) //Ellie just calculated 10
+addNumbers.apply(ellie,[1,2,3,4]) //Ellie just calculated 10
+
+When to use apply
+-when a function does not accept an array, 
+apply will spread out values in an array for us
+
+var nums = [5,7,1,4,2];
+Math.max(nums); //NaN
+Math.max.apply(this, nums); //7
+
+function sumValues(a,b,c){
+  return a+b+c;
+}
+var values = [4,1,2]
+sumValues(values); //"4,1,2undefinedundefined"
+sumValues.apply(this,[4,1,2]); //7
+
+
+
+Bind
+-the parameters work like call, but bind returns a function with the 
+context of 'this' bound already
+
+function addNumbers(a,b,c,d){
+  return this.firstName + " just calculated " + (a,b,c,d);
+}
+var ellie = {
+  firstName: "Ellie"
+}
+var ellieCalc = adNumbers.bind(ellie, 1,2,3,4); // function(){}
+ellieCalc(); //Ellie just calculated 10
+
+Partial Application
+//with bind - we do not need to know all the arguments up front
+var ellieCalc = adNumbers.bind(ellie, 1,2); // function(){}
+ellieCalc(3,4); //Ellie just calculated 10
+
+Bind in the Wild
+-very commonly we lose the context of 'this', but in functions that we do 
+not want to execute right away
+
+var colt = {
+  firstName: "Colt",
+  sayHi: function(){
+    setTimeout(function(){
+      console.log("Hi " + this.firstName);
+    }, 1000)
+  }
+}
+colt.sayHi(); //Hi undefined (setTimeout get own callback function renewing 'this')
+
+Call/Apply trigger immediately, use Bind
+
+var colt = {
+  firstName: "Colt",
+  sayHi: function(){
+    setTimeout(function(){
+      console.log("Hi " + this.firstName);
+    }.bind(this), 1000)
+  }
+}
+colt.sayHi(); //Hi Colt
+
+
+*/
+/*
+Write a function called arrayFrom which converts an array-like-object into an array.
+
+Examples:
+    var divs = document.getElementsByTagName('divs');
+    divs.reduce // undefined
+    var converted = arrayFrom(divs);
+    converted.reduce // function(){}....
+*/
+
+function arrayFrom(arrayLikeObject){
+    return [].slice.call(arrayLikeObject);
+}
+
+/* 
+// Write a function called sumEvenArguments which takes all of the arguments passed to a function and returns the sum of the even ones.
+
+Examples:
+    sumEvenArguments(1,2,3,4) // 6
+    sumEvenArguments(1,2,6) // 8
+    sumEvenArguments(1,2) // 2
+*/
+
+function sumEvenArguments(){
+  var newArgs = [].slice.call(arguments);
+  return newArgs.reduce(function(acc,next, i){
+    console.log(i);
+    if (next % 2 === 0) {
+      return acc + next;
+    }else{
+      return acc;
+    }
+  }, 0)
+}
+
+/* 
+Write a function called invokeMax which accepts a function and a maximum amount. invokeMax should return a function that when called increments a counter. If the counter is greater than the maximum amount, the inner function should return "Maxed Out"
+
+Examples:
+
+    function add(a,b){
+        return a+b
+    }
+
+    var addOnlyThreeTimes = invokeMax(add,3);
+    addOnlyThreeTimes(1,2) // 3
+    addOnlyThreeTimes(2,2) // 4
+    addOnlyThreeTimes(1,2) // 3
+    addOnlyThreeTimes(1,2) // "Maxed Out!"
+
+*/
+
+function invokeMax(fn, num){
+    
+}
+
+/* 
+Write a function called once which accepts two parameters, a function and a value for the keyword 'this'. Once should return a new function that can only be invoked once, with the value of the keyword this in the function set to be the second parameter.
+
+Examples:
+
+    function add(a,b){
+        return a+b
+    }
+
+    var addOnce = once(add, this);
+    addOnce(2,2) // 4
+    addOnce(2,2) // undefined
+    addOnce(2,2) // undefined
+    
+    function doMath(a,b,c){
+        return this.firstName + " adds " + (a+b+c)
+    }
+    
+    var instructor = {firstName: "Elie"}
+    var doMathOnce = once(doMath, instructor);
+    doMathOnce(1,2,3) // "Elie adds 6"
+    doMathOnce(1,2,3) // undefined
+    
+
+*/
+
+function once(fn, thisArg){
+    
+}
+
+// BONUSES! 
+
+/* 
+Write a function called bind which accepts a function and a value for the keyword this. Bind should return a new function that when invoked, will invoke the function passed to bind with the correct value of the keyword this. HINT - if you pass more than two parameters to bind, those parameters should be included as parameters to the inner function when it is invoked. You will have to make use of closure!
+
+Examples:
+
+    function firstNameFavoriteColor(favoriteColor){
+        return this.firstName + "'s favorite color is " + favoriteColor
+    }
+    
+    var person = {
+        firstName: 'Elie'
+    }
+    
+    var bindFn = bind(firstNameFavoriteColor, person);
+    bindFn('green') // "Elie's favorite color is green"
+    
+    var bindFn2 = bind(firstNameFavoriteColor, person, 'blue');
+    bindFn2('green') // "Elie's favorite color is blue" 
+    
+    function addFourNumbers(a,b,c,d){
+        return a+b+c+d;
+    }
+
+    bind(addFourNumbers,this,1)(2,3,4) // 10
+    bind(addFourNumbers,this,1,2)(3,4) // 10
+    bind(addFourNumbers,this,1,2,3)(4) // 10
+    bind(addFourNumbers,this,1,2,3,4)() // 10
+    bind(addFourNumbers,this)(1,2,3,4) // 10
+    bind(addFourNumbers,this)(1,2,3,4,5,6,7,8,9,10) // 10
+
+*/
+
+function bind(fn, thisArg){
+    
+}
+
+/* 
+Write a function called flip which accepts a function and a value for the keyword this. Flip should return a new function that when invoked, will invoke the function passed to flip with the correct value of the keyword this and all of the arguments passed to the function REVERSED. HINT - if you pass more than two parameters to flip, those parameters should be included as parameters to the inner function when it is invoked. You will have to make use of closure! 
+
+Flip should return a new function that when invoked takes the correct number of required arguments to that function which are then reversed. HINT - you will need to use the .length property on functions to figure out the correct amount of arguments. For example:
+
+flip(subtractFourNumbers,this,11,12,13,14,15)(1,2,3,4,5,6,7,8,9,10) 
+
+
+
+
+Examples:
+
+    function personSubtract(a,b,c){
+        return this.firstName + " subtracts " + (a-b-c);
+    }
+    
+    var person = {
+        firstName: 'Elie'
+    }
+    
+    var flipFn = flip(personSubtract, person);
+    flipFn(3,2,1) // "Elie subtracts -4"
+    
+    var flipFn2 = flip(personSubtract, person, 5,6);
+    flipFn2(7,8). // "Elie subtracts -4"
+    
+    function subtractFourNumbers(a,b,c,d){
+        return a-b-c-d;
+    }
+
+    flip(subtractFourNumbers,this,1)(2,3,4) // -2
+    flip(subtractFourNumbers,this,1,2)(3,4) // -2
+    flip(subtractFourNumbers,this,1,2,3)(4) // -2
+    flip(subtractFourNumbers,this,1,2,3,4)() // -2
+    flip(subtractFourNumbers,this)(1,2,3,4) // -2
+    flip(subtractFourNumbers,this,1,2,3)(4,5,6,7) // -2
+    flip(subtractFourNumbers,this)(1,2,3,4,5,6,7,8,9,10) // -2
+    flip(subtractFourNumbers,this,11,12,13,14,15)(1,2,3,4,5,6,7,8,9,10) // -22
+
+*/
+
+
+function flip(fn, thisArg){
+    
+}
 
 
 
