@@ -6,43 +6,6 @@
 
 //#region  Arrow functions
 
-var add = function (a, b) {
-  return a + b;
-};
-
-//fuction can be re written as
-var add = (a, b) => a + b;
-
-var add = function (a, b) {
-  return a + b;
-};
-
-//fuction can be re written as
-var add = (a, b) => a + b;
-
-//arrow functions do not get own keyword this, THIS refers to this directly outside of arrow function
-//before without arrow functions, bind was needed
-var instructor = {
-  firstname: "nate",
-  sayHI: function () {
-    setTimeout(
-      function () {
-        console.log("hello " + this.firstname);
-      }.bind(this),
-      1000
-    );
-  },
-};
-
-//refactorred with arrow function, parent function needed for this reference
-var instructor = {
-  firstname: "nate",
-  sayHI: function () {
-    setTimeout(() => {
-      console.log("hello " + this.firstname);
-    }, 1000);
-  },
-};
 //#endregion
 
 //#region Advanced Array Methods
@@ -892,9 +855,9 @@ Examples:
 
 function specialMultiply(a, b) {
   if (arguments.length === 1) {
-    return function(b){
+    return function (b) {
       return a * b;
-    }
+    };
   }
   return a * b;
 }
@@ -932,22 +895,20 @@ Examples (yours might not be like this, since the answer is random every time):
 function guessingGame(amount) {
   var guesses = 0;
   var answer = Math.floor(Math.random() * 11);
-  return function(val){
+  return function (val) {
     guesses++;
     console.log(val, guesses);
     console.log(answer);
     if (val === answer) {
       return "You got it!";
-    }else if(val < answer){
+    } else if (val < answer) {
       return "Your guess is too low!";
-    }
-    else if(val > answer){
+    } else if (val > answer) {
       return "Your guess is too high!";
-    }
-    else if(val > guesses){
+    } else if (val > guesses) {
       return "too many guesses";
     }
-  }
+  };
 }
 /*
 //recap
@@ -1224,8 +1185,8 @@ Examples:
     converted.reduce // function(){}....
 */
 
-function arrayFrom(arrayLikeObject){
-    return [].slice.call(arrayLikeObject);
+function arrayFrom(arrayLikeObject) {
+  return [].slice.call(arrayLikeObject);
 }
 
 /* 
@@ -1237,20 +1198,22 @@ Examples:
     sumEvenArguments(1,2) // 2
 */
 
-function sumEvenArguments(){
+function sumEvenArguments() {
   var newArgs = [].slice.call(arguments);
-  return newArgs.reduce(function(acc,next, i){
+  return newArgs.reduce(function (acc, next, i) {
     console.log(i);
     if (next % 2 === 0) {
       return acc + next;
-    }else{
+    } else {
       return acc;
     }
-  }, 0)
+  }, 0);
 }
 
 /* 
-Write a function called invokeMax which accepts a function and a maximum amount. invokeMax should return a function that when called increments a counter. If the counter is greater than the maximum amount, the inner function should return "Maxed Out"
+Write a function called invokeMax which accepts a function and a maximum amount. 
+invokeMax should return a function that when called increments a counter. 
+If the counter is greater than the maximum amount, the inner function should return "Maxed Out"
 
 Examples:
 
@@ -1266,9 +1229,7 @@ Examples:
 
 */
 
-function invokeMax(fn, num){
-    
-}
+function invokeMax(fn, num) {}
 
 /* 
 Write a function called once which accepts two parameters, a function and a value for the keyword 'this'. Once should return a new function that can only be invoked once, with the value of the keyword this in the function set to be the second parameter.
@@ -1296,11 +1257,9 @@ Examples:
 
 */
 
-function once(fn, thisArg){
-    
-}
+function once(fn, thisArg) {}
 
-// BONUSES! 
+// BONUSES!
 
 /* 
 Write a function called bind which accepts a function and a value for the keyword this. Bind should return a new function that when invoked, will invoke the function passed to bind with the correct value of the keyword this. HINT - if you pass more than two parameters to bind, those parameters should be included as parameters to the inner function when it is invoked. You will have to make use of closure!
@@ -1334,9 +1293,7 @@ Examples:
 
 */
 
-function bind(fn, thisArg){
-    
-}
+function bind(fn, thisArg) {}
 
 /* 
 Write a function called flip which accepts a function and a value for the keyword this. Flip should return a new function that when invoked, will invoke the function passed to flip with the correct value of the keyword this and all of the arguments passed to the function REVERSED. HINT - if you pass more than two parameters to flip, those parameters should be included as parameters to the inner function when it is invoked. You will have to make use of closure! 
@@ -1379,17 +1336,112 @@ Examples:
 
 */
 
-
-function flip(fn, thisArg){
-    
-}
-
-
-
+function flip(fn, thisArg) {}
 
 //#endregion
 
-//#region Arrow Functions Refactor from Non Arrow
+//#region Arrow Functions
+
+var add = function (a, b) {
+  return a + b;
+};
+
+//fuction can be re written as
+var add = (a, b) => a + b;
+
+var add = function (a, b) {
+  return a + b;
+};
+
+//fuction can be re written as
+var add = (a, b) => a + b;
+
+//Refactoring with arrow functions
+//Map from
+[1, 2, 3].map(function (value) {
+  return value * 2;
+}); //[2,4,6]
+//to
+[1, 2, 3].map((value) => value * 2); //[2,4,6]
+
+//Double and filter refactor
+//from
+function doubleAndFilter(arr) {
+  return arr
+    .map(function (value) {
+      return value * 2;
+    })
+    .filter(function (value) {
+      return value % 3 === 0;
+    });
+}
+//to
+var doubleAndFilter = (arr) =>
+  arr.map((val) => val * 2).filter((num) => num % 3 === 0);
+//with a single parameter, no paranthesis needed
+
+/*
+
+-Arrow functions are not exactly the same as regurlar functions
+-arrow functions do not get their own keyword 'this'
+-inside an arrow functiuon the keyword this has its original meaning 
+  from the enclosing context
+-the fact tha arrow functions do not have their own this keyword can be quite helpful - 
+  you just need to understand when you might not want that
+
+*/
+//remember bind is needed(dont invoke immediately with settimeout)
+//otherwise undefined
+var instructor = {
+  firstName: "Ellie",
+  sayHi: function () {
+    setTimeout(
+      function () {
+        console.log("hello" + this.firstName);
+      }.bind(this),
+      1000
+    );
+  },
+};
+//arrow funcrtions as an alternative
+//encolsing context becomes instructor object
+//with use of arrow functions, becuase the arrow fucntion does not have its own 'this', one spcae up
+var instructor = {
+  firstName: "Ellie",
+  sayHI: function () {
+    setTimeout(() => {
+      console.log("hello" + this.firstName);
+    }, 1000);
+  },
+};
+//both arrow function and arrow function
+//function provides 'this' -> instructor
+//another arrow fucntion means window ->another space up
+
+/*
+-Arrow functions do not get own keyword arguments as well
+-Can however be accesed through closure
+*/
+function outer() {
+  return (innerFunction = () => {
+    return arguments;
+  });
+}
+outer(1)(2); //only prints outter functions arguments [1];
+
+//When NOT to use arrow fucntions
+/*
+-Arrow functions should never be used as methods in object 
+ since we will get the incorrect value of the keyword this
+-ES2015 provides a better alternative
+*/
+//a value we dont want (window)
+var instructor = {
+  firstName: "Ellie",
+  sayHi: () => `Hello ${this.firstName}`,
+};
+instructor.sayHi(); //"hello undefined"
+
 //assignment
 /* 1 - Refactor the following code to use ES2015 arrow functions - make sure your function is also called tripleAndFilter
     function tripleAndFilter(arr){
@@ -1400,10 +1452,7 @@ function flip(fn, thisArg){
       })
     }
 */
-
-let tripleAndFilter = (arr) =>
-  arr.map((value) => value * 3).filter((value) => value % 5 === 0);
-var tripleAndFilter1 = (arr) =>
+var tripleAndFilter = (arr) =>
   arr.map((val) => val * 3).filter((val) => val % 5 === 0);
 
 /* 2 - Refactor the following code to use ES2015 arrow functions. Make sure your function is also called doubleOddNumbers
@@ -1415,9 +1464,6 @@ var tripleAndFilter1 = (arr) =>
         })
     }
 */
-
-var doubleOddNumbers = (arr) =>
-  arr.filter((val) => val % 2 !== 0).map((val) => val * 2);
 var doubleOddNumbers = (arr) =>
   arr.filter((val) => val % 2 !== 0).map((val) => val * 2);
 
@@ -1434,19 +1480,20 @@ var doubleOddNumbers = (arr) =>
     }
 */
 
-var mapFilterAndReduce = (arr) => {
+var mapFilterAndReduce = (arr) =>
   arr
-    .map((val) => val.firstname)
-    .filter((val) => val.length > 5)
+    .map((val) => val.firstName)
+    .filter((val) => val.length < 5)
     .reduce((acc, next) => {
       acc[next] = next.length;
       return acc;
     }, {});
-};
-var mapFilterAndReduce1 = (arr) =>
+
+var mapFilterAndReduce = (arr) =>
   arr
     .map((value) => value.firstName)
     .filter((value) => value.length < 5)
+
     .reduce((acc, next) => {
       acc[next] = next.length;
       return acc;
@@ -1458,14 +1505,6 @@ with the values as the parameters passed to the function.
 Example:
     createStudentObj('Elie', 'Schoppik') // {firstName: 'Elie', lastName: 'Schoppik'}
 */
-
-var createStudentObj = (first, last) => {
-  var student = {
-    firstname: first,
-    lastName: last,
-  };
-  return student;
-};
 
 /* 5 - Given the following code: 
 Refactor this code to use arrow functions to make sure that in 1000 milliseconds you console.log 'Hello Colt'
@@ -1480,14 +1519,6 @@ Refactor this code to use arrow functions to make sure that in 1000 milliseconds
     }
 */
 
-var instructor = {
-  firstName: "Colt",
-  sayHi: function () {
-    setTimeout(() => {
-      console.log("hello " + this.firstName);
-    }, 1000);
-  },
-};
 //#endregion
 
 //#region REST AND SPREAD
@@ -1629,5 +1660,845 @@ function bind(fn, thisArg, ...outerArgs) {
     return fn.apply(thisArg, [...outerArgs, ...innerArgs]);
   };
 }
+
+//#endregion
+
+//#region OBJECT ENHANCEMENTS
+/* 
+Object Shorthand Notation
+
+var firstName = "Ellie";
+var lastName = "Schopik"
+
+//ES5
+var instructor = {
+  firstName: firstName,
+  lastName: lastName
+}
+//ES2015 can refactor if keys and values have same name
+var instructor = {
+  firstName,
+  lastName
+}
+
+Object Methods
+var instructor = {
+  sayHello: function(){
+    return "hello";
+  }
+}
+//ES2015 refactor
+var instructor = {
+  sayHello(){
+    return "hello";
+  }
+}
+
+Computed Property Names
+//ES5
+var firstName = "Ellie";
+var instructor = {};
+instructor[firstName] = "Thats me";
+instructor.Ellie // "Thats me"
+
+//ES2015 set value while declaring the object
+var firstName = "Ellie";
+var instructor = {
+  [firstName]: "Thats me"
+}
+instructor.Ellie //"Thats me"
+*/
+
+//#region DESTRUCTURING
+/* 
+Extracting values from data stored in objects and arrays
+//ES5
+var instructor = {
+  firstName: "Ellie",
+  lastName: "Schopik"
+}
+var firstName = instructor.firstName;
+var lastName = instructor.lastName;
+
+//vairable assinged to extracted object value
+
+firstName; //"Ellie"
+lastName; //"Schopik"
+
+//ES2015
+var isntructor = {
+  firstName: "Ellie",
+  lastName: "Schopik"
+}
+//two vairables created from keynames of instructor object
+var {firstName, lastName} = instructor;
+firstName; //"Ellie"
+lastName; //"Schopik"
+
+//different variable names???
+var {firstName: first, lastName: last} = instructor;
+first; //"Ellie"
+last; //"Schopik"
+
+//ES5 Default Values with an object
+function createInstructor(options){
+  var options = options || {};
+  var name = options.name || {first: "Matt", last: "Lane"}
+  var isHilarious = options.isHilarious || false;
+  return [name.first, name.last, isHilarious];
+}
+//lost of work!
+crearteInstructor(); //["Matt", "Lane", false]
+crearteInstructor({isHilarious:true}); //["Matt", "Lane", true]
+crearteInstructor({name:{first:"Tim",last:"Garcia}); //["Tim", "Garcia", false]
+
+ES2015 Destructuring
+function createInstructor({name = {first: "Matt", last: "Lane"}, isHilarious=false} = {}){
+  return [name.first, name.last, isHilarious]
+}
+
+Object fields as parameters 
+//ES5
+function displayInfo(obj){
+  return [obj.name, obj.favColor];
+}
+var instructor = {
+  name: "Ellie",
+  favColor: "Purple"
+};
+displayInfo(); //["Ellie", "Purple"]
+
+//ES2015
+function displayInfo({name, favColor}){
+  return [name, favColor];
+}
+var instructor = {
+  name: "Ellie",
+  favColor: "Purple"
+};
+displayInfo(instructor)
+
+Array Destructuring
+ES5 vs ES2015
+var arr = [1,2,3];
+var a  = arr[0];
+var b  = arr[1];
+var c  = arr[2];
+a; //1
+b; //2
+c; //3
+
+ES2015
+var arr = [1,2,3];
+//brackets left side of equals
+var [a,b,c] = arr;
+a; //1
+b; //2
+c; //3
+
+function returnNumbers(a,b){
+  return [a,b];
+}
+var first = returnNumbers(5,10)[0];
+var second = returnNumbers(5,10)[1];
+first; //5
+second; //10
+
+//sets both variables on one line
+[first, second] = returnNumbers(5,10);
+first; //5
+second; //10
+
+Swapping values
+//ES5
+function swap(a,b){
+  var temp = a;
+  a = b;
+  b = temp;
+  return [a,b];
+}
+swap(10,5); // [5,10]
+
+//ES2015
+function swap(a,b){
+  return[a,b] = [b,a];
+}
+swap(10,5); // [5,10]
+
+*/
+/* 
+Write a function called displayStudentInfo which accepts an object and returns the string "Your full name is" concatenated with the value of the first key and a space and then the value of the last key. See if you can destructure this object inside of the function.
+
+Examples:
+    displayStudentInfo({first: 'Elie', last:'Schoppik'}) // 'Your full name is Elie Schoppik')
+*/
+
+function printFullName({ first, last }) {
+  return `Your full name is ${first} ${last}`;
+}
+
+/* 
+Write a function called printFullName which accepts an object and returns the string "Your full name is" concatenated with the value of the first key and a space and then the value of the last key. See if you can destructure this object DIRECTLY from the parameters. The output of the printFullName function should be the exact same as the displayStudentInfo function. 
+
+Examples:
+    printFullName({first: 'Elie', last:'Schoppik'}) // 'Your full name is Elie Schoppik'
+*/
+
+// you will have to pass in the correct parameters for this function!
+function printFullName({ firstName, lastName }) {
+  return `Your full name is ${firstName} ${lastName}`;
+}
+
+/* 
+Write a function called createStudent which accepts as a parameter, 
+a default parameter which is a destructured object with the key of likesES2015 and value of true, 
+and key of likesJavaScript and value of true. 
+
+    If both the values of likesJavaScript and likesES2015 are true, the function 
+    should return the string 'The student likes JavaScript and ES2015'. 
+
+    If the value of likesES2015 is false the function should return the string 'The student likes JavaScript!'
+
+    If the value of likesJavaScript is false the function should return the string 'The student likesES2015!'
+
+    If both the value of likesJavaScript and likesES2015 are false, the function should return the string 'The student does not like much...'
+
+Examples:
+    createStudent() // 'The student likes JavaScript and ES2015')
+    createStudent({likesES2015:false}) // 'The student likes JavaScript!')
+    createStudent({likesJavaScript:false}) // 'The student likes ES2015!')
+    createStudent({likesJavaScript:false, likesES2015:false}) // 'The student does not like much...')
+*/
+
+// you will have to pass in the correct parameters for this function!
+function createStudent({ likesES2015 = true, likesJavaScript = true } = {}) {
+  var answer = "The student";
+  if (likesJavaScript && likesES2015) {
+    return (answer += " likes JavaScript and ES2015");
+  }
+  if (!likesJavaScript && !likesES2015) {
+    return (answer += " does not like much...");
+  }
+  if (!likesES2015) {
+    return (answer += " likes JavaScript");
+  }
+  if (!likesJavaScript) {
+    return (answer += " likes likes ES2015");
+  }
+}
+/* 
+Write a function called reverseArray which accepts an array and 
+returns the array with all values reversed. See if you can do this without creating a new array!
+
+Examples:
+    reverseArray([1,2,3,4,5]) // [5,4,3,2,1]
+    reverseArray([1,2]) // [2,1]
+    reverseArray([]) // []
+    reverseArray([1,2,3,4,5,6,7,8,9,10]) // [10,9,8,7,6,5,4,3,2,1
+*/
+
+function reverseArray(arr) {
+  for (let i = 0; i < arr.length / 2; i++) {
+    [arr[i], arr[arr.length - 1 - i]] = [arr[arr.length - 1 - i], arr[i]];
+  }
+  return arr;
+}
+
+//#region Guess the Password Refactor
+/* 
+
+*/
+document.addEventListener("DOMContentLoaded", () => {
+  const wordCount = 10;
+  const guessCount = 4;
+  const password = "";
+
+  const start = document.getElementById("start");
+  start.addEventListener("click", () => {
+    toggleClasses(document.getElementById("start-screen"), "hide", "show");
+    toggleClasses(document.getElementById("game-screen"), "hide", "show");
+    startGame();
+  });
+
+  const toggleClasses = (element, ...classNames) => {
+    classNames.forEach((name) => element.classList.toggle(name));
+    // for (var i = 1; i < arguments.length; i++) {
+    //   element.classList.toggle(arguments[i]);
+    // }
+  };
+
+  const startGame = () => {
+    // get random words and append them to the DOM
+    let wordList = document.getElementById("word-list");
+    let randomWords = getRandomValues(words);
+    randomWords.forEach((word) => {
+      let li = document.createElement("li");
+      li.innerText = word;
+      wordList.appendChild(li);
+    });
+
+    // set a secret password and the guess count display
+    password = getRandomValues(randomWords, 1)[0];
+    setGuessCount(guessCount);
+
+    // add update listener for clicking on a word
+    wordList.addEventListener("click", updateGame);
+  };
+
+  // const getRandomValues = (array, numberOfVals) => {
+  //   return shuffle(array).slice(0, numberOfVals);
+  // };
+  let getRandomValues = (array, numVals = wordCount) =>
+    shuffle(array).slice(0, numVals);
+
+  const shuffle = (array) => {
+    let arrayCopy = array.slice();
+    for (let idx1 = arrayCopy.length - 1; idx1 > 0; idx1--) {
+      // generate a random index between 0 and idx1 (inclusive)
+      let idx2 = Math.floor(Math.random() * (idx1 + 1));
+
+      // swap elements at idx1 and idx2
+      // let temp = arrayCopy[idx1];
+      // arrayCopy[idx1] = arrayCopy[idx2];
+      // arrayCopy[idx2] = temp;
+
+      [arrayCopy[idx1], arrayCopy[idx2]] = [arrayCopy[idx2], arrayCopy[idx1]];
+    }
+
+    return arrayCopy;
+  };
+
+  const setGuessCount = (newCount) => {
+    guessCount = newCount;
+    document.getElementById(
+      "guesses-remaining"
+    ).innerText = `Guesses remaining: ${guessCount}.`;
+  };
+
+  const updateGame = (e) => {
+    if (e.target.tagName === "LI" && !e.target.classList.contains("disabled")) {
+      // grab guessed word, check it against password, update view
+      let guess = e.target.innerText;
+      let similarityScore = compareWords(guess, password);
+      e.target.classList.add("disabled");
+      e.target.innerText = `${e.target.innerText} --> Matching Letters: similarityScore`;
+      setGuessCount(guessCount - 1);
+
+      // check whether the game is over
+      if (similarityScore === password.length) {
+        toggleClasses(document.getElementById("winner"), "hide", "show");
+        this.removeEventListener("click", updateGame);
+      } else if (guessCount === 0) {
+        toggleClasses(document.getElementById("loser"), "hide", "show");
+        this.removeEventListener("click", updateGame);
+      }
+    }
+  };
+
+  const compareWords = (word1, word2) => {
+    if (word1.length !== word2.length) throw "Words must have the same length";
+    let count = 0;
+    for (let i = 0; i < word1.length; i++) {
+      if (word1[i] === word2[i]) count++;
+    }
+    return count;
+  };
+});
+
+//#endregion
+
+//#region ES2015 Class Methods
+/*
+Class
+- a reserved keyword in JS, a constant which cnannot be redeclared
+- an abstraction of constructor functions and prototypes.
+  Javascrtipt does not have built in support for object oriented programming
+- the class keywrod does not hoist
+- still use 'new'
+
+
+function Student(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+var ellie = new Student('Ellie', 'Schopoik');
+
+ES2015 refactor
+class Student{
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+}
+var ellie = new Student('Ellie', 'Schopoik');
+
+
+-Use the class keyword instead of creating a function
+-inside, use a speccial method constructor which is run when new is used
+-use the new keyword to create objects
+-constructor is run when new is used
+
+Instance Methods
+-add methods to be sued by every object created from the class
+
+function Student(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+Student.prototype.sayHello = function(){
+  return "Hello " + this.firstName + " " + this.lastName
+}
+
+ES2015 refactor
+class Student{
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  sayHello(){
+    return `Hello ${this.firstName} ${this.lastName}`;
+  }
+}
+-placed inside of class keyword
+-no 'fucntion' keyword - similar to objecy shorthand notation
+-under the hood its palcing methods on the prototype object
+
+ES2015 Static methods
+class Student{
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  sayHello(){
+    return `Hello ${this.firstName} ${this.lastName}`;
+  }
+  static isStudent(obj){
+    return obj.constructor === Student;
+  }
+}
+var student = new Student('E','S');
+Student.isStudent(student) // true
+Student.isStudent([]) // false
+
+
+1 - Create a class for a Person. Each person should have a 
+firstName, lastName, favoriteColor, favoriteNumber.
+
+2 - Add an instance method called multiplyFavoriteNumber 
+that accepts one parameter and returns the product of the 
+parameter multiplied with the favoriteNumber property on a person object.
+    
+Examples:    
+    var person = new Person("Elie", "Schoppik", "purple", 34)
+    person.multiplyFavoriteNumber(10) // 340
+
+*/
+class Person {
+  constructor(firstName, lastName, favouriteColor, favouriteNumber) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.favouriteColor = favouriteColor;
+    this.favoriteNumber = favouriteNumber;
+  }
+  multiplyFavouriteNumber(val) {
+    return val * this.favouriteNumber;
+  }
+}
+
+/*
+Inheritance
+-passing along methods and properties from one class to another
+
+ES5
+-Would like say hello method accessible by student constructor
+
+
+function Person(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+Person.prototype.sayHello = function(){
+  return "Hello " + this.firstName + " " + this.lastName
+}
+function Student(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+Student.prototype = Object.create(Person.prototype);
+Student.prototype.cosntructor = Student
+
+-set prototype of one fucntion to 
+be a new object with dunder proto property of another contructor functions prototype
+-Reset the constructor property on a constructor function
+
+ES2015 Inheritance
+-use keyword 'extends'
+
+class Person{
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  sayHello(){
+    return `Hello ${this.firstName} ${this.lastName}`;
+  }
+}
+Class Student extends Person{
+  //has sayhello function
+}
+*/
+
+/*
+Super
+
+function Person(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+Person.prototype.sayHello = function(){
+  return "Hello " + this.firstName + " " + this.lastName
+}
+function Student(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+-code works, but lots of duplication
+-borrow code from person function to use in student
+
+function Person(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+Person.prototype.sayHello = function(){
+  return "Hello " + this.firstName + " " + this.lastName
+}
+function Student(firstName, lastName){
+  Person.apply(this, arguments)
+}
+
+ES2015 refactor
+-super finds method by same name in parent class to pass to child class
+-super can only be used if a method by same name is implemented in the parent class
+
+class Person{
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  sayHello(){
+    return `Hello ${this.firstName} ${this.lastName}`;
+  }
+}
+class Student extends Person{
+  constructor(firstName, lastName){
+    //must use Super
+    super(firstName, lastName);
+  }
+}
+
+// 1 - Create a class for for a Vehicle. 
+Each vehicle should have a make, model and year property.
+
+// 2 - Add an instance method called start 
+which returns the string "VROOM!"
+
+// 3 - Add an instance method called toString which 
+returns the string "The make, model, and year are" 
+concatenated with the make, model and year property
+
+ Examples 
+    var vehicle = new Vehicle("Tractor", "John Deere", 1999)
+    vehicle.toString() // 'The make, model, and year are Tractor John Deere 1999'
+
+// 4 - Create a class for a Car. Each object created from 
+the Car function should also have a make, model, and year 
+and a property called numWheels which should be 4. The Car 
+prototype should inherit all of the methods from the Vehicle prototype
+
+// 5 - Create a class for a Motorcycle. Each object created 
+from the Motorcycle function should also have a make, model, 
+and year and a property called numWheels which should be 2. 
+The Motorcycle prototype should inherit all of the methods from the Vehicle prototype
+*/
+
+class Vehicle {
+  constructor(make, model, year) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+  start() {
+    return "VROOM!";
+  }
+  toString() {
+    return `The make, model, and year are ${this.make}, ${this.model}, ${this.year}.`;
+  }
+}
+class Car extends Vehicle {
+  constructor() {
+    // super(make, model, year);
+    super(...arguments);
+    this.numWheels = 4;
+  }
+}
+class Motorcycle extends Vehicle {
+  constructor() {
+    // super(make, model, year);
+    super(...arguments);
+    this.numWheels = 2;
+  }
+}
+
+/*
+RECAP
+-quickly create constructor fucntions and prototype methods using the class keyword
+-add class methods using the static keyword
+-implement inheritance using the extends and super keywords
+-ES2015 class syntax is an abstraction of using funcituons and objects
+*/
+
+/*
+MAPS
+-also called hash maps in other languages
+-until ES2015 - objects were replacements for maps
+-similar to objects, except the kyes can be any data type
+-created using new keyword
+
+var firstMap = new Map;
+firstMap.set(1, 'Ellie');
+firstMap.set(false, 'a boolean');
+firstMap.set('nice', 'a string');
+firstMap.delete('nice');
+firstMap.size // 2
+
+var arrayKey = [];
+firstMap.set(arrayKey, [1,2,3,4,5]);
+
+var objectKey = {};
+firstMap.set(objectKey, {a:1});
+
+Extracting values
+firstMap.get(1) // 'Ellie'
+firstMap.get(false) // 'a boolean'
+firstMap.get(arrayKey) // [1,2,3,4,5]
+firstMap.get(objectKey) // {a:1}
+
+firstMap.foreach(v => console.log(v));
+//Ellue
+//a boolean
+//[1,2,3,4,5]
+//{a:1}
+
+Maps implement a Symbol.iterator meaning we can use a for loop
+
+firstMap.values(); //MapIterator of values
+firstMap.keys(); //MapIterator of keys
+
+Why use Maps?
+-finding the size is easy, maps have a size property - no more loops or Object.keys()
+-the keys can be any data type
+-you can accidentally overwrite keys on the object.prototype in an object you make - maps do not have that issue
+-iterating over keys and values in a map is quite easy as well
+
+
+When to use a map
+-if you need to look up keys dynamically (they are not hard coded strings)
+-if you need keys that are not strings
+-if you are frequently adding and removing key/value pairs
+-are key-value pairs frequently added or removed?
+-if you are operating on multiple keys at a time
+
+WeakMap
+-similar to map, but all keys must be objects
+-values in a weakmap can be clearwed from memory if there is no reference to them
+-more performant than maps, but can not be iterated over
+
+SETS
+-a data structure 
+-where all values are unique
+-any type of value can exist in a set
+-created using the new keyword
+-exist in a few other languages, ES2015 brings them to js
+
+var s = new Set;
+//can also be created from array
+var s2 = new Set([1,2,3,4,5]); //{3,1,4,2,5}
+
+s.add(10); //{10}
+s.add(20); //{20, 10}
+s.add(10); //{10}
+s.size; //2
+
+s.has(10); //true
+s.delete(20); //true
+s.size; //1
+
+s2[Symbol.iterator]; //function(){}...
+//we can use a for...of loop
+
+WeakSet
+-similar to set, but all values must be objects
+-values in a weakset can be cleared from memory if there is no reference to them
+-more performatn than sets but can not be iterated over
+*/
+
+class MessageBoard {
+  /*
+  In your constructor method, 
+  you should assign two properties for each object created 
+  from the MessageBoard class. The first should be a property 
+  called messages which is an empty Map, and the second is a property 
+  called id which has a value of 1. 
+  
+  var m = new MessageBoard
+  
+  m.hasOwnProperty('messages') // true
+  m.messages.constructor // function Map() { [native code] }
+  m.hasOwnProperty('id') // true
+  m.id // 1
+  */
+
+  constructor() {}
+
+  /*
+  
+  Add a method called addMessage which accepts a string. 
+  The function should add a key and value to the messages 
+  map with a key of whatever the value of this.id is 
+  and a value of whatever the string is that is passed to the function. 
+  The function should return the object created from the class so 
+  that the method can be chained. (HINT - to implement the last part, 
+  make sure to return this).
+  
+  var m = new MessageBoard
+  m.addMessage('hello');
+  m.messages.size // 1
+  m.addMessage('awesome!') // m
+  m.addMessage('awesome!').addMessage('nice!').addMessage('cool!') 
+  */
+
+  addMessage() {}
+
+  /*
+  Add a method called findMessageById which accepts a 
+  number and returns the message in the messages map 
+  with the same key as the number passed to the function. 
+  If the key is not found in the messages map, the function should return undefined.
+  
+  
+  var m = new MessageBoard
+  m.addMessage('hello!')
+  m.addMessage('hi!')
+  m.addMessage('whats up?')
+  m.findMessageById(1) // 'hello!'
+  m.findMessageById(2) // 'hi!'
+  m.findMessageById(3) // 'whats up?'
+  m.findMessageById(4) // undefined
+  m.findMessageById() // undefined
+  */
+
+  findMessageById() {}
+
+  /*
+  Add a method called findMessageByValue which accepts a string and 
+  returns the message in the messages map with the same value as the 
+  string passed to the function. If the value is not found in the 
+  messages map, the function should return undefined.
+  
+  var m = new MessageBoard
+  m.addMessage('hello!')
+  m.addMessage('hi!')
+  m.addMessage('whats up?')
+  m.findMessageByValue('hello!') // 'hello!'
+  m.findMessageByValue('hi!') // 'hi!'
+  m.findMessageByValue('whats up?') // 'whats up?'
+  m.findMessageByValue('nothing here') // undefined
+  m.findMessageByValue() // undefined
+  */
+
+  findMessageByValue() {}
+
+  /*
+  Add a method called removeMessage which accepts a number and 
+  removes a message in the messages map with a key of the 
+  number passed to the function.
+  
+  var m = new MessageBoard
+  m.addMessage('hello!')
+  m.addMessage('hi!')
+  m.addMessage('whats up?')
+  m.removeMessage(1)
+  m.removeMessage(2)
+  m.messages.size // 1
+  m.removeMessage() // m
+  */
+
+  removeMessage() {}
+
+  /*
+  Add a method called numberOfMessages which returns the 
+  number of keys in the messages map
+  
+  var m = new MessageBoard
+  m.addMessage('hello!')
+  m.addMessage('hi!')
+  m.addMessage('whats up?')
+  m.numberOfMessages() // 3
+  */
+
+  numberOfMessages() {}
+
+  /*
+  Add a method called messagesToArray which returns 
+  an array of all of the values in the messages map
+  
+  var m = new MessageBoard
+  m.addMessage('hello!')
+  m.addMessage('hi!')
+  m.addMessage('whats up?')
+  m.messagesToArray() // ['hello!', 'hi!', 'whats up?'])
+  */
+
+  messagesToArray() {}
+}
+
+/*
+Write a function called uniqueValues which accepts an 
+array and returns the number of unique values in the array
+
+uniqueValues([1,1,2,2,2,3,3,3,3,4,4,4,5,5,6]) // 6
+*/
+
+function uniqueValues() {}
+
+/*
+
+Write a function called hasDuplicates which accepts an 
+array and returns true if there are duplicate values in the array, 
+otherwise it should return false.
+
+hasDuplicates([1,1,2,2,2,3,3,3,3,4,4,4,5,5,6]) // true
+hasDuplicates([1,2,3,4,5,6]) // false
+hasDuplicates([]) // false
+*/
+
+function hasDuplicates() {}
+
+/*
+
+Write a function called countPairs which accepts an array 
+of numbers and a number. The function should return the number 
+of unique pairs (two numbers) that sum up to the number passed to the function.
+
+countPairs([8,2,6,4,10,0],10) // 3
+countPairs([8,2],10) // 1
+countPairs([1,2],10) // 0
+countPairs([1,2,3,4,5],10) // 0
+countPairs([],10) // 0
+countPairs([5,4,-10,6,-20,16],-4) // 2
+countPairs([0,-4],-4) // 1
+*/
+
+function countPairs() {}
 
 //#endregion
