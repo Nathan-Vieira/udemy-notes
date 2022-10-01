@@ -2284,7 +2284,7 @@ firstMap.get(arrayKey) // [1,2,3,4,5]
 firstMap.get(objectKey) // {a:1}
 
 firstMap.foreach(v => console.log(v));
-//Ellue
+//Ellie
 //a boolean
 //[1,2,3,4,5]
 //{a:1}
@@ -2299,7 +2299,6 @@ Why use Maps?
 -the keys can be any data type
 -you can accidentally overwrite keys on the object.prototype in an object you make - maps do not have that issue
 -iterating over keys and values in a map is quite easy as well
-
 
 When to use a map
 -if you need to look up keys dynamically (they are not hard coded strings)
@@ -2358,7 +2357,10 @@ class MessageBoard {
   m.id // 1
   */
 
-  constructor() {}
+  constructor(messages, id) {
+    this.messages = new Map();
+    this.id = 1;
+  }
 
   /*
   
@@ -2377,7 +2379,11 @@ class MessageBoard {
   m.addMessage('awesome!').addMessage('nice!').addMessage('cool!') 
   */
 
-  addMessage() {}
+  addMessage(msg) {
+    this.messages.set(this.id, msg);
+    this.id++;
+    return this;
+  }
 
   /*
   Add a method called findMessageById which accepts a 
@@ -2397,7 +2403,9 @@ class MessageBoard {
   m.findMessageById() // undefined
   */
 
-  findMessageById() {}
+  findMessageById(val) {
+    return this.messages.get(val);
+  }
 
   /*
   Add a method called findMessageByValue which accepts a string and 
@@ -2416,7 +2424,13 @@ class MessageBoard {
   m.findMessageByValue() // undefined
   */
 
-  findMessageByValue() {}
+  findMessageByValue(val) {
+    for (let msg of this.messages.values()) {
+      if (msg === val) {
+        return msg;
+      }
+    }
+  }
 
   /*
   Add a method called removeMessage which accepts a number and 
@@ -2433,7 +2447,10 @@ class MessageBoard {
   m.removeMessage() // m
   */
 
-  removeMessage() {}
+  removeMessage(id) {
+    this.messages.delete(id);
+    return this;
+  }
 
   /*
   Add a method called numberOfMessages which returns the 
@@ -2446,7 +2463,9 @@ class MessageBoard {
   m.numberOfMessages() // 3
   */
 
-  numberOfMessages() {}
+  numberOfMessages() {
+    return this.messages.size;
+  }
 
   /*
   Add a method called messagesToArray which returns 
@@ -2459,7 +2478,15 @@ class MessageBoard {
   m.messagesToArray() // ['hello!', 'hi!', 'whats up?'])
   */
 
-  messagesToArray() {}
+  messagesToArray() {
+    //   myArray = [];
+    //   for(let msg of this.messages){
+    //     myArray.push(msg);
+    //   }
+    //   return myArray;
+    // }
+    return Array.from(this.messages.values());
+  }
 }
 
 /*
@@ -2469,7 +2496,9 @@ array and returns the number of unique values in the array
 uniqueValues([1,1,2,2,2,3,3,3,3,4,4,4,5,5,6]) // 6
 */
 
-function uniqueValues() {}
+function uniqueValues(arr) {
+  
+}
 
 /*
 
