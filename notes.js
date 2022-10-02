@@ -2497,7 +2497,8 @@ uniqueValues([1,1,2,2,2,3,3,3,3,4,4,4,5,5,6]) // 6
 */
 
 function uniqueValues(arr) {
-  
+  let unique = [...new Set(arr)];
+  return unique;
 }
 
 /*
@@ -2511,7 +2512,12 @@ hasDuplicates([1,2,3,4,5,6]) // false
 hasDuplicates([]) // false
 */
 
-function hasDuplicates() {}
+function hasDuplicates(arr) {
+  //copy of array as set, will add all values that are unique 
+  //and then comapre to oringinal size, if different, non unique values
+  console.log(new Set(arr));
+  return (new Set(arr)).size !== arr.length;
+}
 
 /*
 
@@ -2528,6 +2534,20 @@ countPairs([5,4,-10,6,-20,16],-4) // 2
 countPairs([0,-4],-4) // 1
 */
 
-function countPairs() {}
+function countPairs(arr, num) {
+  let set = new Set(arr);
+  let count = 0;
+  for (let i = 0; i < set.length; i++) {
+    if (set[i] + num) {
+      
+    }
+  }
+  for(let val of set){
+    if (val + num === num) {
+      count++;
+    }
+  }
+  return count;
+}
 
 //#endregion
