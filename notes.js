@@ -2537,17 +2537,79 @@ countPairs([0,-4],-4) // 1
 function countPairs(arr, num) {
   let set = new Set(arr);
   let count = 0;
-  for (let i = 0; i < set.length; i++) {
-    if (set[i] + num) {
-      
-    }
-  }
-  for(let val of set){
-    if (val + num === num) {
+  console.log(set);
+  for(let val of arr){
+    set.delete(val);
+    //remove unique values of set of array
+    if (set.has(num - val)) {
+      //if the set contains a value of the number minus the value, increment 
       count++;
     }
+    console.log(set);
   }
   return count;
 }
+//#endregion
+
+//#region PROMISES
+/*
+-placeholder for asynchronus operation
+-a one time guaranteed return of some future value
+-when that value is figured out - the promise is resolved.fufilled or rejected
+-friendly way to refactor callback code
+-libaries have implemented promises for a while,
+  ES2015 is a little late to the game
+
+-created with new keyword
+-every promise contains two parameters, resolve and reject
+-you can call these parameters whatever you like,
+  resolve and reject are common
+-these parameters are both functions to be run if the promise is resolved or rejected
+
+//return new promise after 1 sec, if math.random greater than .5
+function displayRandomTime(){
+  return new Promise(function(resolve, reject){
+    setTimeout(function() {
+      if (Math.random() > .5) {
+        resolve('Yes');
+      }else{
+        reject('No');
+      }
+    }, 1000);
+  });
+}
+
+-the returned value from a promise will always contain a .then
+and .catch method which are functions to be executed when the poromise
+is resolved or rejected
+
+displayRandomTime().then(function(value){
+  console.log(value);
+}).catch(function(error){
+  console.log(error);
+});
+
+Returning promises
+-since a promise always returns something that has a .then
+(thenable) - we can chain promises together and return values
+from one promise to another
+
+var years = [];
+$.getJson('https://omdapi.com...')
+.then(function(movie){
+  years.push(movie.Year);
+  return $.getJson('https://omdapi.com...Differet movie');
+})
+.then(function(movie){
+  years.push(movie.Year);
+  console.log(years);
+})
+console.log('ALL DONE!');
+//All Done (will print before years)
+//["1997", "2001"]
+
+
+*/
+
 
 //#endregion
