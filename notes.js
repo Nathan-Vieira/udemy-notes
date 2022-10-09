@@ -2513,10 +2513,10 @@ hasDuplicates([]) // false
 */
 
 function hasDuplicates(arr) {
-  //copy of array as set, will add all values that are unique 
+  //copy of array as set, will add all values that are unique
   //and then comapre to oringinal size, if different, non unique values
   console.log(new Set(arr));
-  return (new Set(arr)).size !== arr.length;
+  return new Set(arr).size !== arr.length;
 }
 
 /*
@@ -2538,11 +2538,11 @@ function countPairs(arr, num) {
   let set = new Set(arr);
   let count = 0;
   console.log(set);
-  for(let val of arr){
+  for (let val of arr) {
     set.delete(val);
     //remove unique values of set of array
     if (set.has(num - val)) {
-      //if the set contains a value of the number minus the value, increment 
+      //if the set contains a value of the number minus the value, increment
       count++;
     }
     console.log(set);
@@ -2595,10 +2595,10 @@ Returning promises
 from one promise to another
 
 var years = [];
-$.getJson('https://omdapi.com...')
+$.getJson('https://omdbapi.com?t=titanic&apikey=thewdb')
 .then(function(movie){
   years.push(movie.Year);
-  return $.getJson('https://omdapi.com...Differet movie');
+  return $.getJson('https://omdbapi.com?t=shrek&apikey=thewdb');
 })
 .then(function(movie){
   years.push(movie.Year);
@@ -2608,8 +2608,342 @@ console.log('ALL DONE!');
 //All Done (will print before years)
 //["1997", "2001"]
 
+PROMISE.ALL
+-accepts an array of promises and resolves all of them or rejects them 
+when all of them or rejects once a single one of the promises has been 
+first rejected (fail fast)
+
+-if all of the passed promises fulfill, Promis.a;; is fulfilled with an array
+of the values from the passed in promises, in the same order as the promises passed in
+
+-the promises dont resolve sequentially, but promise.all waits for them
+
+function getMovie(title){
+  return $.getJson('https://omdbapi.com?t=${title}&apikey=thewdb');
+}
+var titanicPromise = getMovie('titanic');
+var shrekPromise = getMovie('shrek');
+var braveheartPromise = getMovie('braveheart');
+
+-we can now resolve all promises using promise.all
+-promises passed as array, returns array to be iterated over
+Promise.all([titanicPromise, shrekPromise, braveheartPromise]).then(function(movie){
+  return movies.foreach(fucntion(value){
+    console.log(movies);
+  });
+});
+*/
+
+/*
+ES2015 Promises Assignment
+1. Write a function called getMostFollowers, 
+which accepts a variable number of arguments. 
+You should then make an AJAX call to the 
+Github User API (https://developer.github.com/v3/users/#get-a-single-user) 
+to get the name and number of followers of each argument. 
+The function should return a promise, which when resolved, 
+returns a string which displays the username who has the most followers. 
+
+Hint - Try to use Promise.all to solve this and remember that 
+the jQuery AJAX methods ($.getJSON, $.ajax, etc.) return a promise.
+
+getMostFollowers('elie','tigarcia','colt').then(function(data){
+    console.log(data)
+});
+ 
+"Colt has the most followers with 424" 
+*/
+
+function getMostFollowers(...usernames) {
+  let api = "https://api.github.com/users/";
+  let urls = usernames.map((username) => $.getJSON(api + usernames));
+  return Promise.all(urls).then(function (data) {
+    let max = data.sort((a, b) => a.followers < b.followers)[0];
+    return `${max.name} has the most followers with ${max.followers}`;
+  });
+}
+
+/*
+2. Write a function called starWarsString, which accepts a number. 
+You should then make an AJAX call to the 
+Star Wars API (https://swapi.co/ ) to search for a 
+specific character by the number passed to the function. 
+Your function should return a promise that when resolved 
+will console.log the name of the character.
+
+starWarsString(1).then(function(data){
+    console.log(data)
+})
+ 
+"Luke Skywalker"
+*/
+function startWarsString(val) {
+  var str = '';
+  return $.getJSON(`https://swapi.co/api/people/${val}/`).then(function(data){
+    str += `${data} is featured in `;
+    let filmData = data.films[0];
+    return $.getJSON(filmData);
+  }).then(function(res){
+    str += `${res.title}, directed by ${res.director} `
+    let planetData = res.planets[0];
+    return $.getJSON(planetData)
+  }).then(function(res){
+    str += `and it takes place on ${res.name}`;
+    return str;
+  }).then(function(finalStr){
+    return finalStr;
+  });
+}
+
+//#endregion
+
+//#region GENERATORS
+/*
+-a special kind of function which can pause execution
+and resume at any time
+-created using an *
+-when invoked, a generator object is returned to us with the keys of value, and done
+-Value is wha is returned from the paused fuinction using the yield keyword
+-Done is a boolean which return true when the function has completed
+
+function* pauseAndReturnValues(num){
+  for (let i = 0; i < num; i++) {
+    yield i;
+  }
+}
+var gen = pauseAndReturnValues(5);
+
+gen.next(); //{value: 0, done, false}
+gen.next(); //{value: 1, done, false}
+gen.next(); //{value: 2, done, false}
+gen.next(); //{value: 3, done, false}
+gen.next(); //{value: 4, done, false}
+gen.next(); //{value: undefined, done, true}
+
+
+Yiel Multiple Values
+function* printValues(){
+  yield "first";
+  yield "second";
+  yield "third";
+}
+var g = printValues();
+g.next(); // "first"
+g.next(); // "second"
+g.next(); // "third"
+
+Iterating over a generator
+for(val of pauseAndReturnValues(3)){
+  console.log(val);
+}
+//0
+//1
+//2
+
+Async Generators
+-we can use generators to pause async code
+
+function* getMovieData(movieName){
+  console.log('starting');
+  yield $.getJSON(`https://omdbapi.com?t=${movieName}&apikey=thewdb`);
+  console.log(`ending`);
+}
+
+-the next value returned is a promise sp lets resovle it
+var movieGetter = getMovieData('titanic');
+movieGetter.next().value.then(val => console.log(val));
 
 */
+//#endregion
+
+//#region Object.Assign
+/*
+-create copies of objects without the same reference
+//ES5
+var o = {name: "elie"};
+var o2 = o;
+o2.name = "Tim";
+o.name; //"Tim"
+
+Fixing up with object.assign
+-if you want a copy without reference, add empty object of assign
+//ES2015
+var o = {name: "elie"};
+var o2 = Object.assign({},o);
+o2.name = "Tim";
+o.name; //"Elie"
+
+Not a deep clone
+-deep refernced copied
+-if we have objects inside of the object we are copying,
+those still have a reference
+var o = {instructors: ["Elie", "Tim"]};
+var o2 = Object.assign({}, o);
+
+o2.instructors.push("Colt");
+o.instructors; // ["Elie", "Tim", "Colt"];
+
+Array.from
+-conver other data types into arrays
+
+var divs =document.getElementByTagName("div"); //returns array like object
+divs.reduce //undefined
+
+//ES5
+var converted = [].slice.call(divs) // convert array-like-object into an array
+converted.reduce //function reduce() {...}
+
+//ES2015
+var divs = document.getElementByTagName("div");
+var converted = Array.from(divs);
+
+-convert different types of objects into arrays
+var firstSet = new Set([1,2,3,4,3,2,1]) //{1,2,3,4}
+var arrayFromSet = Array.from(firstSet); //[1,2,3,4]
+
+Find
+-invoked on arrays
+-accepts callback with value, index, array
+-returns the value found or undefined if not found
+
+var instructors = [{name: "elie"}, {name: "Matt"},{name: "Tim"},{name: "Colt"}];
+instructors.find(function(val){
+  return val.name === "Tim";
+}); //{name: "Tim"}
+
+FindIndex
+-similar to find, but returns an index or -1 if not found
+
+instructors.findIndex(function(val){
+  return val.name === "Tim";
+}); //2
+
+Includes
+-return boolean if a value is in a string - easier than using indexOf
+//ES5
+"awesome".indexOf("some") > -1; // true
+//ES2015
+"awesome".includes("some"); // true
+
+Number.isFinite
+-a handy way for handling NaN being a type of number
+//ES5
+function(seeIfNumber(val){
+  if(typeOf val === "number" && !isNaN(val)){
+    return "It is a number";
+  }
+})
+
+//ES2015
+fucntion seeIfNumber(val){
+  if(Number.isFinite(val){
+    return "It is a number";
+  })
+}
+
+
+
+Recap
+-the map data structure is useful when creating key value pairs 
+and the keys are not strings
+
+-Sets are useful for creating unique data sets and do not 
+require key value pairs
+
+-the es2015 promise constructor allows for creating primises and 
+resolving an array of promises with Promise.all
+
+-generators are valueable when creating functions 
+of methods that can pause and resume at any time
+
+-ES2015 provides a few usefull methid sfor converting 
+array like objects into arrays, making shallow copies of 
+objects and handling issues with NaN and typeof number
+*/
+
+
+
+
+/*
+Write a function called copyObject, which accepts one parameter, 
+an object. The function should return a shallow copy of the object.
+
+var o = {name: 'Elie'}
+var o2 = copyObject({}, o)
+o2.name = "Tim"
+o2.name // 'Tim'
+o.name // 'Elie'
+*/
+
+function copyObject(obj){
+  return Object.assign({},obj);
+}
+
+/* 
+
+Write a function called checkIfFinite which accepts one parameter 
+and returns true if that parameter is a finite number.
+
+checkIfFinite(4) // true
+checkIfFinite(-3) // true
+checkIfFinite(4. // .toEqual(true
+checkIfFinite(NaN) // false
+checkIfFinite(Infinity) // false
+*/
+
+function checkIfFinite(val){
+  return Number.isFinite(val);
+}
+
+/*
+
+Write a function called areAllNumbersFinite which accepts an array 
+and returns true if every single value in the array is a finite number, 
+otherwise return false.
+
+var finiteNums = [4,-3,2.2]
+var finiteNumsExceptOne = [4,-3,2.2,NaN]
+areAllNumbersFinite(finiteNums) // true
+areAllNumbersFinite(finiteNumsExceptOne) // false
+*/
+
+function areAllNumbersFinite(arr){
+  return arr.every(Number,isFinite);
+}
+
+/* 
+
+Write a function called convertArrayLikeObject which accepts a single 
+parameter, an array like object. The function should return the array 
+like object converted to an array.
+
+var divs = document.getElementsByTagName('div')
+divs.reduce // undefined
+
+var converted = convertArrayLikeObject(divs)
+converted.reduce // funciton(){}...
+*/
+
+function convertArrayLikeObject(obj){
+  return Array.from(obj);
+}
+
+/*
+
+Write a function called displayEvenArguments which accepts a variable 
+number of arguments and returns a new array with all of the arguments 
+that are even numbers.
+
+displayEvenArguments(1,2,3,4,5,6) // [2,4,6]
+displayEvenArguments(7,8,9) // [8]
+displayEvenArguments(1,3,7) // []
+*/
+
+function displayEvenArguments(){
+  
+}
+
+
 
 
 //#endregion
