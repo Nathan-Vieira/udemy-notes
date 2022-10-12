@@ -2678,21 +2678,25 @@ starWarsString(1).then(function(data){
 "Luke Skywalker"
 */
 function startWarsString(val) {
-  var str = '';
-  return $.getJSON(`https://swapi.co/api/people/${val}/`).then(function(data){
-    str += `${data} is featured in `;
-    let filmData = data.films[0];
-    return $.getJSON(filmData);
-  }).then(function(res){
-    str += `${res.title}, directed by ${res.director} `
-    let planetData = res.planets[0];
-    return $.getJSON(planetData)
-  }).then(function(res){
-    str += `and it takes place on ${res.name}`;
-    return str;
-  }).then(function(finalStr){
-    return finalStr;
-  });
+  var str = "";
+  return $.getJSON(`https://swapi.co/api/people/${val}/`)
+    .then(function (data) {
+      str += `${data} is featured in `;
+      let filmData = data.films[0];
+      return $.getJSON(filmData);
+    })
+    .then(function (res) {
+      str += `${res.title}, directed by ${res.director} `;
+      let planetData = res.planets[0];
+      return $.getJSON(planetData);
+    })
+    .then(function (res) {
+      str += `and it takes place on ${res.name}`;
+      return str;
+    })
+    .then(function (finalStr) {
+      return finalStr;
+    });
 }
 
 //#endregion
@@ -2861,9 +2865,6 @@ array like objects into arrays, making shallow copies of
 objects and handling issues with NaN and typeof number
 */
 
-
-
-
 /*
 Write a function called copyObject, which accepts one parameter, 
 an object. The function should return a shallow copy of the object.
@@ -2875,8 +2876,8 @@ o2.name // 'Tim'
 o.name // 'Elie'
 */
 
-function copyObject(obj){
-  return Object.assign({},obj);
+function copyObject(obj) {
+  return Object.assign({}, obj);
 }
 
 /* 
@@ -2891,7 +2892,7 @@ checkIfFinite(NaN) // false
 checkIfFinite(Infinity) // false
 */
 
-function checkIfFinite(val){
+function checkIfFinite(val) {
   return Number.isFinite(val);
 }
 
@@ -2907,8 +2908,8 @@ areAllNumbersFinite(finiteNums) // true
 areAllNumbersFinite(finiteNumsExceptOne) // false
 */
 
-function areAllNumbersFinite(arr){
-  return arr.every(Number,isFinite);
+function areAllNumbersFinite(arr) {
+  return arr.every(Number.isFinite);
 }
 
 /* 
@@ -2924,7 +2925,7 @@ var converted = convertArrayLikeObject(divs)
 converted.reduce // funciton(){}...
 */
 
-function convertArrayLikeObject(obj){
+function convertArrayLikeObject(obj) {
   return Array.from(obj);
 }
 
@@ -2939,11 +2940,263 @@ displayEvenArguments(7,8,9) // [8]
 displayEvenArguments(1,3,7) // []
 */
 
-function displayEvenArguments(){
-  
+function displayEvenArguments(...val) {
+  return val.reduce(function (acc, next) {
+    if (next % 2 === 0) {
+      acc.push(next);
+    }
+    return acc;
+  }, []);
+}
+//dang why didnt i think of this
+function displayEvenArguments() {
+  return Array.from(arguments).filter((val) => val % 2 === 0);
+}
+//#endregion
+
+//#region ES2016/17
+/*
+ES2016 Esponentiation Operator (calc power of number)
+//ES2015
+var calculatedNumber = Math.pow(2,4);
+calculatedNumber; // 16
+
+//ES2016
+var calculatedNumber = 2**4;
+calculatedNumber; // 16
+
+-------
+
+//ES2015
+var nums = [1,2,3,4];
+var total = 2;
+for (let i = 0; i < nums.length; i++) {
+  total = Math.pow(total, nums[i]);
+}
+
+//ES2016
+var nums = [1,2,3,4];
+var total = 2;
+for (let i = 0; i < nums.length; i++) {
+  total **= nims[i];
 }
 
 
+Includes
+[].includes
+//ES2015
+var nums = [1,2,3,4,5];
+nums.indexOf(3) > -1 //true
+nums.indexOf(44) > -1 //false
 
+//ES2016
+var nums = [1,2,3,4,5];
+nums.includes(3) //true
+nums.includes(44) //false
+
+PadStart and PadEnd
+To ensure strings are certain length, even when needed to be padded
+padStart
+-first param is total length of new string 
+-second param is what o pad with from the start
+  the default is an empty space
+
+"awesome".padStart(10); // "   awesome"
+"awesome".padStart(10, "!"); // "!!!awesome"
+
+padEnd
+-opposite start
+"awesome".padEnd(10, "!"); // "awesome!!!"
+
+
+Async Functions
+-a special kind of function that is created using the word async
+-the purpopse of async functions to simplify writing asynchronous 
+ code, specifically Promises
+
+async fucntion first(){
+  return "we did it";
+}
+first(); //returns a promise
+first().then(val => console.log(val)); //"We did it"
+
+Await
+-a reserved keyword that can only be used inside async functions
+-await pauses the executiopn of the async function and is 
+ followed by a Promise. 
+-The await keyword waits for the promise to resolve,and 
+ then resumes the async fucntions execution and returns the resolved value
+-think of the await keyword like a pause button
+
+Using await
+async function getMovieData(){
+  console.log("starting!");
+  var movieData = await $.getJSON('https://omdbapi.com?t=titanic&apikey=thewdb');
+  //this line does NOT run until the promise is resolved!
+  console.log("all done");
+  console.log(movieData);
+}
+getMovieData() //logs an object with data about the movie
+No .then or callback or yield necessary
+
+
+
+Object async
+-we can also place async functions as methods inside objects
+-just make sure to prefix the name of the function with the async keyword
+var movieCollector = {
+  data: "titanic",
+  async getMovie(){
+    var response = await $.getJSON(`https://omdbapi.com?t=${this.data}&apikey=thewdb`);
+    console.log(response);
+  }
+}
+movieCollector.getMovie();
+
+
+Class async
+-we can also place async functinos as instance methods with ES2015 class syntax
+class MovieData{
+  constructor(name){
+    this.name = name;
+  }
+  async getMovie(){
+    var response = await $.getJSON(`https://omdbapi.com?t=${this.name}&apikey=thewdb`);
+    console.log(response);
+  }
+}
+var m = new MovieData('shrek');
+m.getMovie();
+
+Handling Errors
+-if a promise is rejected using await, an erro will be thrown
+so we can easily use a try catch statement to handle errors
+
+async function getUser(user){
+  try{
+    var response = await $.getJSON(`https://api.githun.com/users/${user}`);
+    console.log(response.name);
+  }catch(e){
+    //404 error
+    console.log('the user does not exist');
+  }
+}
+getUser('elie'); //"Elie Schoppik"
+getUser('foo'); //"user does not exist"
+
+Async functions continued
+
+Thinking about HTTP Requests
+-two requests sequentially
+-will slow system down quite a bit
+
+async function getMovieData(){
+  console.log("starting!");
+  var responseOne = await $.getJSON('https://omdbapi.com?t=titanic&apikey=thewdb');
+  var responseTwo = await $.getJSON('https://omdbapi.com?t=shrek&apikey=thewdb');
+  console.log("responseOne");
+  console.log("responseTwo");
+}
+getMovieData();
+
+
+Refactoring
+-start the HTTP requests in parallel and then await their resolved promise
+
+async function getMovieData(){
+  console.log("starting!");
+  var titanicPromise = await $.getJSON('https://omdbapi.com?t=titanic&apikey=thewdb');
+  var shrekPromise = await $.getJSON('https://omdbapi.com?t=shrek&apikey=thewdb');
+
+  var titanicData = await titanicPromise;
+  var shrekData = await shrekPromise;
+
+  console.log(titanicData);
+  console.log(shrekData);
+}
+getMovieData();
+
+Await with Promise.all
+-we can use Promise.all to await multiple resolved promises
+-here we are simply waiting for an array of Promises to resolve
+async function getMovieData(first, second){
+  var movieList = await Promise.all([
+    $.getJSON(`https://omdbapi.com?t=${first}&apikey=thewdb`),
+    $.getJSON(`https://omdbapi.com?t=${second}&apikey=thewdb`)
+  ]);
+  console.log(movieList[0].Year);
+  console.log(movieList[1].Year);
+}
+getMovieData('shrek', 'blade');
+//2001
+//1998
+
+
+*/
+
+/* Async Functions Assignment
+
+1. Write a function called hasMostFollowers, 
+which accepts a variable number of arguments. 
+You should then make an AJAX call to the 
+Github User API (https://developer.github.com/v3/users/#get-a-single-user) 
+to get the name and number of followers of each argument. 
+The function should return a string which displays the username who has the most followers. 
+
+Hint - Try to use Promise.all to solve this and 
+remember that the jQuery AJAX methods ($.getJSON, $.ajax, etc.) return a promise.
+
+hasMostFollowers('elie','tigarcia','colt').then(function(data){
+    console.log(data)
+});
+ 
+"Colt has the most followers with 424" 
+*/
+
+async function hasMostFollowers(...vals) {
+  var data = await Promise.all([vals]);
+}
+/*
+2. Write a function called starWarsString, which accepts a number. 
+You should then make an AJAX call to the Star Wars API (https://swapi.co/ ) 
+to search for a specific character by the number passed to the function. 
+Your function should return a promise that when resolved will 
+console.log the name of the character.
+
+starWarsString(1).then(function(data){
+    console.log(data)
+})
+ 
+"Luke Skywalker"
+*/
+
+/*
+Bonus 1 -  Using the data from the previous AJAX call above, 
+make another AJAX request to get the first film that character 
+is featured in and return a promise that when resolved will 
+console.log the name of the character and the film they are featured in 
+
+starWarsString(1).then(function(data){
+    console.log(data)
+})
+ 
+"Luke Skywalker is featured in The Empire Strikes Back, directed by Irvin Kershner"
+*/
+
+/*
+Bonus 2 -  Using the data from Bonus 1 - make another AJAX call to 
+get the information about the first planet that the film contains. 
+Your function should return a promise that when resolved will 
+console.log the name of the character and the film they 
+are featured in and the name of the planet. 
+
+starWarsString(1).then(function(data){
+    console.log(data)
+})
+ 
+"Luke Skywalker is featured in The Empire Strikes Back, directed by Irvin Kershner and it takes place on Hoth"
+
+
+*/
 
 //#endregion
