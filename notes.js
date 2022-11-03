@@ -3153,8 +3153,13 @@ hasMostFollowers('elie','tigarcia','colt').then(function(data){
 "Colt has the most followers with 424" 
 */
 
-async function hasMostFollowers(...vals) {
-  var data = await Promise.all([vals]);
+function hasMostFollowers(...vals) {
+  let baseUrl = "https://api.github.com/users/";
+  let urls = vals.map((val) => $.getJSON(baseUrl + val));
+  return Promise.all(urls).then(function (data) {
+    let max = data.sort((a, b) => a.followers < b.followers)[0];
+    return `${max.name} has the most followers with ${max.followers}`;
+  });
 }
 /*
 2. Write a function called starWarsString, which accepts a number. 
@@ -3169,7 +3174,6 @@ starWarsString(1).then(function(data){
  
 "Luke Skywalker"
 */
-
 /*
 Bonus 1 -  Using the data from the previous AJAX call above, 
 make another AJAX request to get the first film that character 
@@ -3198,5 +3202,174 @@ starWarsString(1).then(function(data){
 
 
 */
+function starWarsString(num) {
+  var str = "";
+  return $.getJSON(`https://swapi.co/api/people/${num}/`)
+    .then(function (data) {
+      str += `${data.name} is featured in `;
+      let filmData = data.films[0];
+      return $.getJSON(filmData);
+    })
+    .then(function (res) {
+      str += `${res.title}, directed by ${res.director} `;
+      let planetData = res.planets[0];
+      return $.getJSON(planetData);
+    })
+    .then(function (res) {
+      str += `and it takes place on ${res.name}`;
+      return str;
+    })
+    .then(function (finalStr) {
+      return finalStr;
+    });
+}
 
+//#endregion
+
+//#region Object Rest and Spread
+/*
+Rest
+-Gather remaining (rest) of keys and values in an object
+and create a new one out of them
+
+var instructor = {first: "Elie", last: "Schoppik", job: "Instructor", numSiblings:3};
+var {first, last, ...data} = instructor
+first: //"Ellie"
+last: // "Schopik"
+data: // {job: "instructor", numSiblings: 3}
+
+Spread
+-Spread out keys and values from one object to another
+
+var instructor = {first: "Elie", last: "Schoppik", job: "Instructor"};
+var instructor2 = {...instructor, first:"Tim", last:"Garcia"};
+
+-Great for creating objects starting with default values
+and is a more concise alternative to Object.assign
+
+var defaults = {job:"instructor", ownsCat:true, ownsDog:true};
+var matt = {...defaults, ownsCat:false}
+var colt = {...defaults, ownsDog:false}
+
+
+*/
+//#endregion
+
+//#region RECAP
+/*
+-ES2016 provides the **(exponentiation operator) operator and [].includes 
+to easily see if a value is in an array
+
+-ES2017 provides helpful string methods and introduces async functions
+
+-The async await keywords in ES2017 allow for writing synchronous looking 
+functions that under the good are asynchronous
+
+-We can combine async functions with Promise.all to create 
+readable synchronous "looking" code
+
+-The rest and spread operator are proposed changes to javaScript
+
+*/
+//#endregion
+
+//#region INTROFUCTION TO REACT AND JSX
+/*
+Front-End Frameworks
+-javaScript lbraries that handle DOM manipulation
+
+-Handles navigations (HTML5 push state)
+
+-state management
+
+React
+-2013 open source project
+-a view library that uses composable components
+-other libraries are commonly used with react are 
+react router - naviagtion within app
+redux - single place to store state in app
+
+Composable components
+-components composed into a single application
+
+First Component
+-create component
+-use reactDom to render
+
+JSX
+-Define babel, a transpiler
+-use jsx in our react component
+
+Babel
+-transpiler: convers from one source code version to another
+-a general purpose translator
+-jsx -> vanilla js
+
+Random Box assignment
+
+Multiple Components
+-render array of jsx
+-use react compontent inside another
+
+Create React App
+-Describe webpack
+  -module bundle for modern js apps
+  -combines different js files into a bundle.js, production application for dl
+  -plugin system to run tools like babel
+  -also bundles other assets like images
+
+-install create react app
+ -
+-create app
+
+Javascript Import Statements
+-import component from another file
+  import React, {Component} from 'react';
+  import {app} from './App' if not export by default
+  import {app as pizza} from './App' to rename
+
+
+-export a component from a file
+-use export default vs non default export
+
+Import Hobby List Assignment to Pet file
+
+React Props
+-Define props
+  -immutable data passed into your components
+  -accessible in your compnent as an object called: this.props
+  class ShowText extends Component {
+    render(){
+      //Inside the render methiod, we have access
+      //to this.props (this refers to the ShowText instance)
+      return <div>{this.props.text}</div>
+    }
+  }
+
+-Passing In Props To a Component
+  <ShowText
+    text = "This is a prop named text"
+  />
+   class ShowText extends Component {
+    render(){
+      return <div>{this.props.text}</div>;
+    }
+  }
+
+-Props are Immutable, break things when changing 'this'
+class ShowText extends Component {
+  render(){
+    //Never change this.props
+    this.props.text = "WRONG!"; //Causes TypeError
+    this.props = {}; //Never do this
+    this.props.newProp = "ALSO WRONG!"; //Use Default Props
+
+    return <div>{this.props.text}</div>;
+  }
+}
+-use props inside of a component
+
+Recipe App
+-Use props in app
+*/
 //#endregion
