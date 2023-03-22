@@ -1493,7 +1493,6 @@ var mapFilterAndReduce = (arr) =>
   arr
     .map((value) => value.firstName)
     .filter((value) => value.length < 5)
-
     .reduce((acc, next) => {
       acc[next] = next.length;
       return acc;
@@ -3371,5 +3370,994 @@ class ShowText extends Component {
 
 Recipe App
 -Use props in app
+
+-passed props to component as
+<div className="App">
+      <Recipe title="pasta" 
+      ingredients={['flour', 'water']}
+      instructions="Mix ingredients"
+      img="logo192.png" />
+</div>
+
+-can be used in components as variables
+-populated if exists
+//const { title, img, instructions } = this.props;
+
+-can get specific props 
+//const ingredients = this.props.ingredients;
+//const ingredients = this.props.ingredients.map((ing, index) => (
+      <li key={index}>{ing}</li>
+    ));
+
+-access to variabes in JSX used with html as
+<div className="recipe-card-content">
+          <h3 className="recipe-title">Recipe {title}</h3>
+          <h4>Ingredients:</h4>
+          <ul>{ingredients}</ul>
+          <h4>Instructions</h4>
+          <p>{instructions}</p>
+</div>
+
+
+Default Props and Prototypes
+-use default props to give props a default value
+-use protoTypes to specify what props a component is expecting
+
+defaultProps
+-default values for props in a component
+-if no props passed, map will return undefined
+-static default due to the value not being specific to an instance
+-written two ways, second is after the list class is declared
+
+1.
+class IngredientList extends Component {
+  static defaultProps = {
+    ingredients: []
+  }
+  render() {
+    return (
+      <ul>
+        {this.props.ingredients.map((ing, index) => (
+          <li key={index}>{ing}</li>
+        ))}
+      </ul>
+    );
+  }
+}
+
+2.
+class IngredientList extends Component {
+  render() {
+    return (
+      <ul>
+        {this.props.ingredients.map((ing, index) => (
+          <li key={index}>{ing}</li>
+        ))}
+      </ul>
+    );
+  }
+}
+IngredientList.defaultProps = {
+  ingredients: []
+};
+
+Default props to load data for a component
+-data provided for map
+-props listed explicity
+-can use rest/spread shorthand - not recomended
+
+class App extends Component{
+  static defaultProps = {
+    recipes: [{
+      title: "Spaghetti",
+      ingredients: ['flour', 'water'],
+      instructions: "Mix ingredients",
+      img: "spaghetti.jpg"
+    }]
+  }
+  1.
+  render(){
+    return(
+      <div>
+        {this.props.recipes.map((r, index) => (
+          <Recipe key={index} title={r.title}
+            ingredients={r.ingredients}
+            img={r.img} instructions={r.instructions}
+          />
+        ))}
+      </div>
+    );
+  }
+  2.
+  render(){
+    return(
+      <div>
+        {this.props.recipes.map((r, index) => (
+          <Recipe key={index} {...r} />
+        ))}
+      </div>
+    );
+  }
+}
+
+
+PropTypes
+-development time type checker for your props
+-npm install --save prop-types
+-specify requriements for props for users of components 
+
+-ingredients prop must be an array, of strings, and is required
+-provides warning in console to check during development if any fail
+
+import PropTypes from 'prop-types';
+
+class IngredientList extends Component{
+  static propTypes = {
+    ingredients: PropTypes.arrayOf(PropTypes.string).isRequired
+  }
+  render(){
+    return(
+      <ul>
+        {this.props.ingredients.map((ing, index) =>(
+          <li key={ingdex}>{ing}</li>
+        ))}
+      </ul>
+    );
+  }
+}
+
+Recipe App Props Exercise
+-use default props and prop types where appropriate
+-Nav, 3 recipes
+
+Recipe App Props Exercise Solution
+-Make recipeList.js, takes list of recipes and displays using recipe component
+-contains default props template with all recipes wanted to display, 
+  usually passed where class is declared 
+-proptypes used to require passed object to be of type array of objects (each recipe data)
+-render method to map over each recipe, 
+  passing each props data to generate each individual recipe card
+-return list of JSX elements inside of a div container, the recipe list of recipes made in render
+-import recipe list in home page without recipes array props, because of default props
+-can add proptypes to require individual types of data in Recipe.js component
+class RecipeList extends Component {
+  static defaultProps = {
+    recipes: [
+      {
+        title: "Spaghetti",
+        ingredients: ["pasta", "8 cups water", "1 box spaghetti"],
+        instructions: "Open jar of spaghetti sauce. Bring to simmer...",
+        img: "https://veganwithgusto.com/wp-content/uploads/2021/05/speedy-spaghetti-arrabbiata-1st-image.jpg",
+      },
+      {
+        title: "Milkshake",
+        ingredients: ["pasta", "8 cups water", "1 box spaghetti"],
+        instructions: "Open jar of spaghetti sauce. Bring to simmer...",
+        img: "",
+      },
+      {
+        title: "Avacado Toast",
+        ingredients: ["pasta", "8 cups water", "1 box spaghetti"],
+        instructions: "Open jar of spaghetti sauce. Bring to simmer...",
+        img: "",
+      },
+    ],
+  };
+  static porptypes = {
+    recipes: Proptypes.arrayOf(Proptypes.object)
+  }
+  render() {
+    const recipes = this.props.recipes.map((r, index) =>{
+        <Recipe key={index}{...r} />
+    });
+    return(
+        <div className="recipe-list">
+            {recipes}
+        </div>
+    )
+  }
+}
+
+export default RecipeList;
+
+
+Props.children
+-a collection of the childern inside of a component 
+
+-get children to display in a row 
+class App extends Component {
+  redner(){
+    return(
+      <Row>
+        <p>Timothy</p>
+        <div>Moxy</div>
+        <h1>React</h1>
+      </Row>
+    );
+  }
+}
+
+-define styles to make anything inside this comoponent to be displayed in a row
+-{this.props.children} is a collection of all elements inside
+class Row extends Component {
+  redner(){
+    return(
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+      }}>
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
+State
+-stateful data
+-data in app that can change
+-can never change props, state can change
+
+State example to displays static state
+-every constructor should take props and invoke super props which calls constructor
+-define state in constructor, equals some object with data we might want to change
+-can access sate in render method
+class App extends Component {
+  constructor(props){
+    super(props);
+    this.state = {favColor: 'red'};
+  }
+  render(){
+    return(
+      <div>
+        my favourite color: {this.state.favColor}
+      </div
+    );
+  }
+} 
+
+
+setState
+-the correct way to change state in your application
+-simplest usage: setState acceps an object with new properties and values for this.state
+-shoudl never modify state directly, always call setState to change
+this.setState({...});
+
+-setTimeOut callback to setState to blue
+-setState is asynchronous, eventually calls render to change dom
+class App extends Component {
+  constructor(props){
+    super(props);
+    this.state = {favColor: 'red'};
+
+    setTimeout(() =>{
+      this.setState({favColor: 'blue'})
+    }, 3000);
+  }
+  render(){
+    return(
+      <div>
+        my favourite color: {this.state.favColor}
+      </div
+    );
+  }
+} 
+
+
+Pure Functions
+-a function without side effects
+-does not modify its inputs
+-its repeatable(same inputs same outputs)
+
+doubleValues is not pure
+addjob not pure unless person object added and returns new object
+
+var person = {id: 53, name: "Tim"};
+function addJob(personObj, job){
+  return {...personObj, job};
+}
+addJob(person, "Instructor");
+
+
+All changes to this.state should be pure
+always use setSate and use object passed
+
+Update Complex State Exercise
+-randomly select instructor
+-remove random hobby
+-reset on refresh
+
+
+React Component Architecture
+-How is sate shared?
+-state is always passed from a parent down to a child component as a prop
+-state should not be passed to a sibling or a parent
+
+App.js intructor item with props passed to instructor object
+
+//instructor item taking name of string and array of string as props
+//returns result as li, used in app component
+
+//taking state from this.state.instructors
+//passing down to child component as props
+//inside of instructoritem... name and hobbies will be a prop
+
+/*
+  when setState is called, render is called
+  when render is called, when render is called, there is a new value for state
+  this.state.instructors will render new instructor items
+  any instructor with different values will get re rendered in the dom
+  they will be taken out of the dom and re rendered with the new set of props
+  props can never change, but the component can be unmounted and re mounted with new values
 */
+/*
+class InstructorItem extends Component {
+  static propTypes = {
+    name: PropTypes.string,
+    hobbies: PropTypes.arrayOf(PropTypes.string)
+  }
+  render(){
+    return(
+      <li>
+        <h3>{this.props.name}</h3>
+        <h4>
+          Hobbies: {this.props.hobbies.join(", ")}
+        </h4>
+      </li>
+    );
+  }
+}
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      instructors : [
+        {
+          name: 'Tim',
+          hobbies: ['sailing', 'react']
+        }, {
+          name: 'Matt',
+          hobbies: ['math', 'd3']
+        }
+      ]
+    };
+  }
+  render(){
+    const instructors = this.state.instructors.map((instructor, index)
+      <InstructorItem
+        key = {index}
+        name = {instructor.name}
+        hobbies = {instructor.hobbies}
+      />
+    ));
+    return(
+      <div className="App">
+        <ul>
+          {instructors}
+        </ul
+      </div>
+    )
+  }
+}
+/*
+Who Owns the state?
+-probably tictactoe
+-if restart game is on navbar it will affect state of tictactoe
+-navbar wants state, cannot share state between siblings
+-state must be pushed to parent... App component 
+-App component owns state and passes data to tictactoe as props
+class App extends Component {
+  render(){
+    return(
+      <div>
+      <NavBar />
+      <TicTacToe />
+      </div>
+    );
+  }
+}
+
+State should always be owned by 1 component
+
+Bad Practice
+-theres an event (constructor) which wants to modify state of instructor
+-maybe wants to edit name or add new hobby
+-this.state.name/hobbies comes from props
+-this is an anti pattern in react
+-cannot pass props to state
+
+class IsntructorItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: this.props.name,
+      hobbies: this.props.hobbies
+    };
+  }
+}
+
+
+Stateless functional components
+-no longer extending component, not a class, just writing a function
+-the function implements the render method only: no constructor, no state
+-declaring function getting props as parameter
+-function implemetns render, h1
+
+import React from 'react';
+
+const Greeting = props => (
+  <h1>Hello, {props.name}</h1>
+);
+export default Greeting;
+
+
+Refactor InstructorItem to stateless function
+-no longer a class
+-props is param, no need for this.props...
+-proptypes added after function if needed
+-generally a good idea to turn any component without state into a stateless fucntional component
+
+const InstructorItem  = props => {
+  return(
+    <li>
+      <h3>{props.name}</h3>
+      <h4>
+        Hobbies: {props.hobbies.join(", ")}
+      </h4>
+    </li>
+  );
+}
+InstructorItem.propTypes = {
+  name: PropTypes.string,
+  hobbies: PropTypes.arrayOf(PropTypes.string)
+}
+
+
+setState can be tricky
+Objectives
+-use a function as the first parameter to setState
+-add a callback to setState to determine when the state is up to date
+
+setState that depends on previous state
+-new value of counter depends on old value of counter
+-having multiple setSates will not return desired result
+-setState is Asychronous, Object assign same behaviour
+-result is 2
+
+Object.assign({},
+  {counter: this.state.counter + 1},
+  {counter: this.state.counter + 1},
+  {counter: this.state.counter + 1},
+);
+
+this.state = {counter: 1};
+this.state = {counter: 1};
+this.setState = ({
+  counter: this.state.counter + 1
+});
+
+Solution: update function
+-what you want to use if state depends on previous state
+-when a setState depends on previous sate, use a function parameter, rather than just passing an object
+this.setState((prevState, props) =>{
+  return {
+    counter: prevSate.counter + 1
+  };
+});
+
+setState is Asynchronous
+-console log will not return correct value
+
+this.setState({name: "Tim"});
+//wont be updated yet
+console.log(this.state.name)
+
+Refactor
+this.setState({name: "Tim"}, () =>{
+  console.log("Now state is up to date",
+  this.state.name
+  );
+});
+
+-Use update funtion if dependent on previous state
+-Be aware that setState is asynch, if you wish to check state, provide a callback to setState
+
+React DevTools
+-extra tab for eact in dev tools
+-able to see components in heirarcy, can check state
+-can select element in dom, and check which component is currently rendering it
+-can see state updated in real-time
+
+Colored boxes exercise
+-every 300 ms, a random box is chosen to change colours
+-app component will need constructor, and state for boxes, set interval to change box with setState
+-all boxes same component, containing one property containing color
+-make box stateless functional, the box itself wont have state, the app above will
+*/
+
+/*
+//App component
+import React, { Component } from "react";
+import Box from "./Box";
+import "./App.css";
+
+const numBoxes = 32;
+class App extends Component {
+  constructor(props) {
+    super(props);
+    //create array with size of 32
+    //fill with mapped data...
+    //randomly selected color from apps default props (this.props.allColors)
+    //representing a color for each box
+    //this referenced as app
+    //setState as boxes array
+    const boxes = Array(numBoxes).fill().map(this.getRandomColor, this);
+    this.state = {boxes};
+
+    //set interval to change color of box
+    //create copy of state, cannot edit directly
+    //random index from size of boxes array
+    //
+    setInterval(() => {
+      const boxes = this.state.boxes.slice();
+      const randIndex = Math.floor(Math.random() * boxes.length);
+      boxes[randIndex] = this.getRandomColor();
+      this.setState({boxes});
+    }, 300);
+  }
+  //random color selection function
+  //sets random color index from allColors prop
+  getRandomColor() {
+    let colorIndex = Math.floor(Math.random() * this.props.allColors.length);
+    return this.props.allColors[colorIndex];
+  }
+  render() {
+    //box variable to be rendered from a map of boxes array 
+    //boxes mapped, Box component rendered with data passed as props
+    const boxes = this.state.boxes.map((color, index) =>(
+      <Box key={index} color={color} />
+    ));
+    return( 
+      //boxes rendered in div
+    <div className="App">
+      {boxes}
+    </div>
+    );
+  }
+}
+export default App;
+
+//Box component 
+//box, stateless functional component, does not access state
+import React from "react";
+import './Box.css';
+import PropTypes from 'prop-types';
+
+//destructur props to get only  color param
+const Box = ({color}) =>{
+    const style = {
+        width: '180px',
+        height: '180px',
+        display: 'inline-block',
+        backgroundColor: color
+    }
+    return <div style={style} />;
+};
+Box.PropTypes = {
+    color: PropTypes.string
+}
+export default Box;
+
+*/
+/*
+The Virtual DOM, Events, and Forms
+Objectives
+-Describe the virtual DOM
+-define a synthetic events
+-Describe changes in React 16 (Fiber)
+
+Virtual DOM
+-a data structure stored by React that tracks changes from one render state to the next
+-if something has changed from one render to the enxt, the browsers DOM is updated (Reconciliation)
+
+Reconciliation
+  App
+    Instructor - > delete
+    Instructor
+    Instructor
+-------------------------
+    App
+    Instructor
+    Instructor
+
+Update process is called reconciliation
+
+Synthetic Events
+-supports all the native browser events, but provides a consistent API on all browsers
+
+React16
+Fiber
+-render can return an array of jsx elements or a string
+render(){
+  return [
+    <div...
+  ]
+}
+
+Error Boundary
+-error handling in react
+
+Events
+Objectives
+-demonstrate an onClick event
+-using bond functions vs inline callbacks
+
+onClick Example
+
+class ClickExample extends Component {
+  constructor(props){
+    super(props);
+    this.state = {name: "tim"};
+    this.handleClick = this.handleClick.bind(this);
+  }
+  handleClick(e){
+    this.setState((prevState, props) => ({
+      name: prevState.name.toUpperCase()
+    });
+  }
+  render(){
+    return(
+      <div>
+        <p>{this.state.name}</p>
+        <button type="button" onClick={this.handleClick}>
+          UPPERCASE
+        </button>
+      </div>
+    );
+  }
+}
+
+Common mistake
+<button type="button" onClick={this.handleClick()}>
+the function will invoke immediately, not on event
+
+Forms
+Objectives
+-describe a controlled component vs uncontrolled
+-handle submit using onsubmit
+
+Uncontrolled component
+<input type="text" />
+-react is not aware of what the user is typing
+-the browser is in charge of the state
+
+Controlled Component
+<input type="text" value={this.state.inputText} />
+-react is now in control of the state via this.state.inputText, but the input cant be updated
+
+Controlled Component with Update
+//e = whatever value is inside input, set as state
+<input 
+  type="text" 
+  name="inputText"
+  value={this.state.inputText}
+  onChange={(e) =>{
+    this.setState({inputText: e.target.value})
+  }}
+/>
+-react is now in control of the state via this.state.inputText and the state can change via onChange
+
+OnSubmit
+-have a value of state.inputText in input
+-onChange event to setState as input value
+-prevent default to save state, will submit an http request and refresh page, losing data
+-update data array, adding last state to end of array, after inputs submitted
+-this.state.inputText will be input.value on form submission
+-update state with data, remove input data
+
+<form onSubmit={(e) =>{
+  e.preventDefault();
+  const data = [...this.state.data,
+                this.state.inputText];
+  this.setState({data, inputText: ''});
+}}>
+  <input
+    type="text"
+    name="inputText"
+    value={this.state.inputText}
+    onChange={(e) =>{
+      this.setState({[e.target.name]: e.target.value})
+    }}
+  />
+</form>
+
+Common Mistake
+-button click submit is not the same as form submit
+-some behaviours arent covered by button click, always use onSubmit event
+<form
+    <input />
+    <button onClick={trying to submit here}
+      type="submit" />
+<form>
+
+
+TODO APP EXERCISE
+
+Refs
+Objectives
+-define a ref in react
+-use a ref on an uncontrolled input component
+
+refs
+-a direct reference to a dom element
+
+
+RecipeApp with State
+Memory game exercise
+
+
+Component Lifecycle Methods
+
+Mounting
+- when comoonent is first rendered in dom
+- constuctor()
+- componentWillMount() - before dom is loaded -  tells when constructor is finished but render not called
+- render()
+- componentDidMount() - after dom is loaded - after components markup placed in dom
+
+component will mount and did mount are called once in the lifetime of component
+
+Unmounting
+- when component taken out of dom
+- componentWillUnmount() - good place to cancel setInterval
+
+Updating
+- when setState is called
+- componentWillRevieveProps(nextProps)
+- shouldComponentUpdate(nextProps, nextState)
+- componentWillUpdate(nextProps, nextState)
+- render()
+- componentDidUpdate(prevProps, prevState) - good for logging on render
+
+Forcing Update
+- forceUpdate(callback)
+- skips shouldComponentUpdate and forces a render. should be avoided
+
+
+Lifecycle Method examples
+componentWillUnmount
+- setInterval changing box colors
+- componentWillUnmount(){
+  clearInterval(this.intervalId)
+}
+
+componentDidMount
+- make an ajax request after mounted
+
+Country flag guessing app
+fetch flag info
+show flag on screen
+show country names for guessing
+on guess, show if right or wrong and restart
+
+
+
+*/
+
+/*
+React Router---
+
+HTML5 History Object
+-modify address bar with history.pushState
+-descrie how bookmarking a single page application works
+
+History API
+-history.back();
+-history.forward();
+-history.pushState({}, 'title', '/newpage');
+allows javascript to manipulate the browser history'
+
+Changes to History
+-changes the url address bar
+-changes the browsers local navigation history
+-DOES NOT cause the browser to make a GET request
+
+history.pushState({}, "test", "/react");
+window.location //Location {href:"x.com/react"} (contains origin)
+
+history.pushState({}, "test", "/d3");
+window.location //Location {href:"x.com/d3"}
+
+History object will be used to create a single page application
+that feels like a normal website
+
+Browser back button, internal links, etc should all 
+seem to behave like a page with server rendering
+
+Client decides which components to render based on address, no get from server
+
+
+Handling a bookmark
+GET /user/55->
+              <-index.html(only div id="root")
+Render react app with correct user component based on url get
+
+-server side support is required for bookmark
+
+React Router
+-describe react router
+-differentiate BrowserRouter vs HashRouter
+-Use Link, Switch, and Route components
+
+React Router v4
+-a library to manage routing in your single page application
+-declarative api that uses components to make rendering decisions
+
+BrowserRouter vs HashRouter
+-BrowserRouter uses the history object and makes changes to the url
+-the hash router adds hashes to the url instead
+
+BrowserRouter
+/
+/users
+/users/57492/messages
+
+HashRouter
+/#
+/#users
+/#users/57492/messages
+
+BrowserRouter requires server support
+HashRouter does not require server support
+Always choose browser router if you are able
+npm install --save react-router-dom
+
+React Router Setup
+
+import React from 'react';
+import ReactDom from 'react-dom';
+import{ BrowserRouter as Router } from 'react-router-dom';
+import App from './App';
+
+ReactDom.render(
+  <Router>
+    <App />
+  </Router>
+  document.getElementById('root')
+)
+
+Switch and Route
+import React from 'react';
+import{ Switch, Route } from 'react-router-dom';
+
+const HomePage = () = (<div>HomePage</div>);
+const AboutPage = () = (<div>AboutPage</div>);
+
+//conditional render based on url
+//switch makes routes if elses
+const SwitchDemo = () =>(
+  <Switch>
+    <Route path="/about" component={About}/>
+    <Route path="/" component={HomePage}/>
+  </Switch>
+);
+
+Link
+import React from 'react';
+import{ Link } from 'react-router-dom';
+import SwitchDemo from './SwitchDemo';
+
+//essentially an anchor tag
+//will use the history object to change the url
+const App = () =>(
+  <div>
+    <Link to="/">HOME</Link>
+    <Link to="/about">ABOUT</Link>
+    <div style={{fontSise: '3em', margin: '25px'}}>
+      <SwitchDemo/>
+    </div>
+  </div>
+);
+
+NavLink
+import React from 'react';
+import{ NavLink } from 'react-router-dom';
+import SwitchDemo from './SwitchDemo';
+
+const s = {color: "red"} //active style
+const app = () =>(
+  <div>
+    <NavLink exact activeStyle={s} to={"/"}> //active style will be active on page
+      HOME
+    </NavLink>
+    <NavLink exact activeStyle={s} to={"/about"}>
+      ABOUT
+    </NavLink>
+    <div style={{fontSize: '3em', margin: '25px'}}>
+      <SwitchDemo>
+    </div>
+  </div>
+);
+
+
+React Router Continued
+-use URL parameters for a Route
+-define Route props
+-define withRouter
+-passing your own props to a component in Route (render vs component)
+
+URL Parameters for a Route
+
+import React from 'react';
+import {Switch, Route } from 'reat-dom-router-dom';
+const Homepage = () => (<div>HomePage</div>);
+const Name = ({match}) => (
+  <div>Hellow, {match.params.name}</div>
+);
+const SwitchDemo = () => (
+  <Switch>
+    <Route path ="/:name" component={Name}/>
+    <Route path ="/" component={Homepage}/>
+  </Switch>
+)
+
+Route Props
+-a component inside of a Route gets 3 props
+
+-match
+  info about how the url matches the route component
+-location
+  wher you are now, similar to window.location
+-history
+  similar to html5 history object,
+  allows explicit changes to the url
+
+withRouter
+-if a component is not rendered inside of a Route component,
+  you can use withRouter to get route props
+
+withRouter Example using history prop
+import {
+  withRouter, Switch, Route
+} from 'react-router-dom';
+
+const SwitchDemo = ({history}) =>(
+  <div>
+    <Switch>
+      <Route path="/:name" component={Name}/>
+      <Route path="/" component={Homepage}/>
+    </Switch>
+    <button onClick={()=>history.push('/')}>
+      Go Home
+    </button>
+  </div>
+);
+export default withRouter(SwitchDemo); //export withRouter for Route props
+
+Route
+Render vs Component
+-use render to pass custom props to your component
+-the route component can either use render or component (never both)
+
+import {Route} from 'react-router-dom';
+
+const teachers = ['Tim','Colt','Matt','Ellie'];
+const Teachers = ({teachers}) => (
+  <ul>
+    {teachers.map((teach, ind) =>(
+      <li key={i}>{teach}</li>
+    ))}
+  </ul>
+);
+
+//props for match location and history
+//provide our additional props (teachers array)
+const App = () => (
+  <Route path="/teachers" render={props => (
+    <Teachers {...props} teachers={teachers} />
+  )}>
+);
+
+*/
+
 //#endregion
