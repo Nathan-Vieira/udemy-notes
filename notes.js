@@ -4358,6 +4358,503 @@ const App = () => (
   )}>
 );
 
+
+
+REDUX
+-state management library
+-models app state as one object -> all data stored 
+-often used with react though does not depend on it 
+
+Redux Actions
+-plain js object that must have a key named tye
+
+{
+  type: "LOGOUT_USER"
+}
+
+Reducer
+-decides which new state should be returned given the 
+old state and action passed
+
+-function to set state as login 
+  state with key of login to determine whether the user is logged in
+
+oldstate as first param, action second
+switch on action type
+if logout, setstate
+if login, setstate
+else return state
+
+function rootReducer(state={}, action){
+  switch(action.type){
+    case: "LOGOUT_USER":
+      return {...state, login:false}
+    case: "LOGIN_USER":
+      return {...state, login:true}
+    default:
+      return state;
+  }
+}
+
+Creating a Store
+-one big js object representing state of application as one param
+contains the actual values of keys and values for state of app
+const store = Redux.createStore(rootReducer);
+
+
+Action - dispatch to cause change in state
+Reducer - decides what actions should be when dispatched
+Store - contains actual js object with keys and values
+
+Changing the State
+-the only way to change the sate is by calling dispatch
+-pass root reducer to change state of login
+
+cosnt store = Redux.createStore(rootReducer);
+store.dispatch({
+  type: "LOGIN_USER"
+});
+
+Getting the state
+-store.getState
+cosnt store = Redux.createStore(rootReducer);
+store.dispatch({
+  type: "LOGIN_USER"
+});
+const newState = store.getState();
+
+REDUX is synchronous
+
+Listening for Chagnes
+-you can add a listener to see when the state has changed
+-any time state change happens call getstate
+
+const store = Redux.createStore(rootReducer);
+const changeCallback = () =>{
+  console.log("state has changed", store.getState());
+}
+const unsubscribe = store.listen(changeCallback)
+
+
+REDUX state change
+-disptach to store created with root reducer (action)
+-reducer returns state based on type(currentState, action)
+-newstate
+-invoke listeners
+
+
+Redux with React
+-describe react redux
+-use the privuder component to share a store
+-use connec to mapStateTpProps and mapDispatchToProps
+
+React Redux
+-a library to facilitate integrating react with redux
+-exposes a provider component and connection function
+-handles listeners, passing in state to a component 
+npm install --save react-redux
+
+Provider top level app component 
+takes store prop
+
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
+import rootReducer from './reducers';
+
+const store = createStore(rootReducer);
+
+ReactDom.render(
+  <Provider store={store}>
+    <App/>
+  </Provider>,
+  document.getElementById('root)
+);
+
+Connect: Wrapping a component
+A COMPONENT NEEDING STATE OUT OF STORE
+-after setting up store we need a way to 
+get state out of store and into components
+
+assuming we have key of name in state 
+we need to implement mapStateToProps passing state of app
+to return the peice of state the component needs, name
+export default connect function taking 
+mapStateToProps to return new function to then pass component
+
+import{connect} from 'react-redux';
+
+const BoldName = ({name}) =>(
+  <strong>{name}</strong>
+);
+const mapStateToString = state =>(
+  {name: state.name}
+);
+export default
+  connect(mapStateToProps, null)(boldName);
+
+A COMPONENT DISPATCHING AN ACTION
+-uses second parameter of connect mapDispatchToProps
+-gets two parameters, dispatch and props of component 
+-returns an object, 
+-keys what props you want to pass to the component 
+-values are functions, they typically invoke dispatch with an action
+-when we click use delName prop which is a function 
+that dispatches an action to delete that name
+
+import {connect...
+
+const DelName = ({delName}) => (
+  <button type="Button"
+    onClick={delName}>Delete</button>
+);
+const mapDispatchToProps = (
+  dispatch, ownProps
+) => (
+  {
+    delName: () => (dispatch({
+      type: "DEL_NAME"
+    }))
+  }
+);
+
+export default
+  connect(null, mapDispatchToProps)(DelName)
+
+mapDispatchToProps = (dispatch, ownProps) =>(
+  {
+    delName: () => (dispatch({ type: "DEL_NAME" }))
+  }
+)
+
+Using Wrapped Componenents
+will render a button to delete the name
+const App () => (
+  <div>
+    <BoldName />
+    <DelNAme />
+  </div>
+);
+
+Organizing Redux
+-define a presentational component vs a container component 
+-define combine reducers
+-define action creators
+-describe a folder structure for Redux
+
+Presentational Component
+-primarily concerned with how things look
+-is often stateless functional component 
+but doesnt have to be
+
+Container Component 
+-usually a stateful component that deals with application data
+-often created using higher order components like connect or withRouter
+
+Combine Reducers
+-a redux function that allows for reducer composition
+-each reducer is only resposible for its piece of the state object
+-allows us to compose reducers
+
+creates a key in state called current user
+current user reducer is only concerned with data inside of key
+
+import {combineReducers} from 'redux';
+import currentUser from './currentUser';
+import messages from './messages';
+
+const rootReducer = combineReducers({
+  currentUser, 
+  messages
+});
+export default rootReducer
+
+Messages Reducer
+const messages = (state=[], action) =>{
+  switch(action.type){
+    case "LOAD_MESSAGES":
+        return[...action.messages];]
+    case "ADD_MESSAGE":
+        return[action.message,...state];
+    default:
+      return state;
+  }
+}
+export defauly messages;
+
+Action Creators
+-a function that returns an action object
+-create a function to return the action object 
+to live in a folder called actions
+
+const mapDispatchToProps = dispatch =>({
+  onLogout() {
+    dispatch(actions.userLogout())
+  },
+});
+
+Redux Directory Structure
+  src
+    actions
+    componentns
+    containers
+    reducers
+    index.js
+
+
+Redux Intro
+-create store where state lives
+-create root reducer and set default state with second action param
+to return state
+-rootReducer is what state will look like 
+
+initialState = {
+  count:0
+}
+rootReducer = (state=initialState, action){
+  return state
+}
+const store = Redux.createStore(rootReducer);
+
+store.getState() //{count:0}
+store.dispatch({type: "Increment"}) //requires action passed as object with key of type
+
+
+const rootReducer = (state=initialState, action){
+  if(action.type === "INCREMENT"){
+    state.count++
+    return state
+  }
+  return state
+}
+store.dispatch({type: "Increment"}) 
+store.getState() //{count:1}
+
+
+Reducers must be pure functions
+const rootReducer = (state=initialState, action){
+  if(action.type === "INCREMENT"){
+    let newState = Object.assign({}, state)
+    newState.count++
+    return newState
+  }
+  if(action.type === "DECREMENT"){
+    let newState = Object.assign({}, state)
+    newState.count--
+    return newState
+  }
+  return state
+}
+store.dispatch({type: "Increment"}) 
+store.getState() //{count:1}
+
+
+-create a reducer with some inital state
+-create a store -> the reducer is run and our initla state is defined
+-whenever we want to see our state -> store.getState()
+-whenever we want to make change to our staete -> store.dispatch(action)
+  -actions are objects
+  -actions must have a key of "type"
+-writing a function that returns an object
+  -write a function that returns an action
+
+-action creator
+function incremenet(){
+  return {
+    type: "INCREMENT"
+  }
+}
+store.getState() //{count: 1}
+store.dispatch(increment())
+store.getState() //{count: 2}
+
+
+Redux Counter
+-need some redux store
+-need root reduce
+-inital state
+-some way of changing state
+-increment and decrement in rootReducer action
+-set value of counter to new states returned in disptached actions
+
+Reducer
+const initalSate = {
+  count: 0
+}
+function rootReducer(state=initalSate, action){  
+  switch(action.type){
+    case "INCREMENT":
+      let newState = Object.assign({}, state)
+      let newState = {...state}
+      newsate.count++
+      return newState
+    case "DECREMENT":
+      let newState = Object.assign({}, state)
+      newsate.count--
+      return newState
+    default:
+      return newState
+  }
+}
+
+const store = Redux.createStore(rootReducer)
+
+store.getState() //count:0
+function incremenet(){
+  return {
+    type: "INCREMENT"
+  }
+}
+function decrement(){
+  return {
+    type: "DECREMENT"
+  }
+}
+
+$(document).ready(function(){
+  //initialize count
+  let currentState = store.getState()
+  $("counter").text(currentState.count)
+  $("#increment").on("click", function(){
+    //dispatch increment action
+    store.dispatch({type: "INCREMENT"})
+    let currentState = store.getState()
+    $("counter").text(currentState.count)
+  })
+  $("#decrement").on("click", function(){
+    //dispatch increment action
+    store.dispatch({type: "DECREMENT"})
+    let currentState = store.getState()
+    $("counter").text(currentState.count)
+  })
+})
+
+
+Redux Todos
+-unordered list to call todos
+-form to add / remove todods, input of id task
+-pass additional keys to dipatch actions
+-update list
+-find todo id to remove 
+
+//initial state with id 0 to increment todo id
+cosnt initialState = {
+  todos: [],
+  id: 0
+}
+function rootReducer(disptach, action){
+  swtch(action.type)
+  
+    case "ADDTODO":
+    //add
+    let newState = {..state}
+    newState.id++
+    //return all todos, plus new one to add
+    return{
+      ...newState, 
+      todods: [...newState.todos, {task: action.task, id: newState.id}]
+    }
+    case "REMOVETODO":
+      //remove
+      //return new state where id does not equal action id passed
+      let todos = state.todos.filter(val => val.id !=== action.id)
+      //return copy of state with new todos
+      return {...state, todos}
+    //remove
+    default
+      return state
+}
+
+const store = Redux.createStore(rootReducer)
+
+$(document).ready(function(){
+  $("ul").on("click", "button", function(event){
+    store.dispatch({
+      type: "REMOVETODO",
+      id: $(event.target).attr("id")
+    })
+    //get the buttons parent li which it was appended to and remove it 
+    $(event.target).parent().remove()
+  })
+
+
+  $("form").on("Submit", function(event){
+    event.preventDefault()
+    let newTask = $("task").val()
+    store.dispatch({
+      type: "ADDTODO",
+      task: newTask
+    }) //pass additional keys to action
+    let currentState = store.getState()
+    //create new list item as jquery element 
+    let $newLi = $("<li>", {
+      text: newTask
+    })
+    //button to set id as same todoid from state
+    let $newButton = $("<button", {
+      text: "X",
+      id: currentState.id
+    })
+    $newLi.append($newButton)
+    $("todos").append($newLi)//apppend / set new li as child of todos element(ul)
+    $("form").trigger("reset") //set input to empty text
+  })
+})
+
+REDUX REACT
+APP START
+-root reducer create store
+-mappstate to props to place state on props 
+-render component
+Addtodo
+-update component state
+-root reduce to dispatch action passing component state and return new state
+-mapStateToProps top update redux state
+-render component based on new redux state
+REMOVE todo
+-root reducer for action
+-return redux state
+-mapstatetoprops update redux state connecting props
+-re render component based on redux state
+
+
+
+
+
+Authentication
+-define one way pass hashing
+-deine json web tokens
+
+One Way Hashing
+-converting data into a fixed length has string
+-you can only recreate the hash if you know the original data
+-applicable for saving passwords on your server
+
+Example
+password saved -> bcrypt -> $2a#10asdg....
+user inputs password -> bcrypt -> compare password hash
+
+Users dont want to input their passwords on every page
+need some proof that you have logged in in the past
+
+Json Web Token
+-a web standard for storing signed data
+-can use jwts as proof that youve logged in before
+
+JWT Format
+-Header: ejgjsdcuif....
+-Payload: asdaggc....
+-Signature: hjrh4....
+
+Creating a Token
+-if jwt token string is changed, it will not validate 
+
+Sending JWT to Server
+-HTTP Header
+-Authorization: Bearer <JWT Signature>
+
+WARBLER Exercise
+
+
 */
 
 //#endregion
